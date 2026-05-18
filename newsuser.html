@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоМир - Публикации ВКонтакте</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение общей системы авторизации -->
+    <script src="auth.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f7fa;
+            --green: #2E7D32;
+            --red: #C62828;
+            --border: #e0e0e0;
+            --admin-red: #dc3545;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка (из index.html) */
+        header {
+            background: linear-gradient(135deg, var(--primary), #326BF6);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Стили для бейджей ролей из auth.js */
+        .role-badge {
+            font-size: 10px !important;
+            padding: 3px 10px !important;
+            border-radius: 12px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            margin-top: 2px !important;
+        }
+        .role-badge.admin {
+            background: linear-gradient(135deg, var(--admin-red), #c82333) !important;
+            color: white !important;
+            border: 1px solid #ff6b6b !important;
+        }
+        .role-badge.user {
+            background: linear-gradient(135deg, #28a745, #218838) !important;
+            color: white !important;
+            border: 1px solid #6fcf97 !important;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .user-role {
+            font-size: 10px;
+        }
+        .admin-crown {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #ffc107;
+            color: #000;
+            font-size: 8px;
+            padding: 2px 4px;
+            border-radius: 50%;
+            border: 1px solid white;
+        }
+        .admin-only {
+            position: relative;
+        }
+        .admin-only::before {
+            content: "ADMIN";
+            position: absolute;
+            top: -8px;
+            right: 5px;
+            background: var(--admin-red);
+            color: white;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .menu-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 5px 0;
+        }
+        .logout-btn {
+            color: var(--admin-red) !important;
+        }
+        .logout-btn:hover {
+            background: #fff5f5 !important;
+        }
+        
+        /* Стили для админских пунктов в навигации */
+        nav a.admin-only {
+            position: relative;
+            background: rgba(220, 53, 69, 0.1) !important;
+            border: 1px solid rgba(220, 53, 69, 0.3) !important;
+        }
+        nav a.admin-only:hover {
+            background: rgba(220, 53, 69, 0.2) !important;
+        }
+        nav a.admin-only i {
+            color: #dc3545 !important;
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Основной контент страницы */
+        .posts-section {
+            padding: 60px 0;
+            min-height: 80vh;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h1 {
+            font-size: 36px;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Панель фильтров */
+        .filters-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .filters-panel h2 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-control, select {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--dark);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(50, 107, 246, 0.1);
+        }
+
+        /* Контейнер постов */
+        .posts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .posts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Карточка поста - УПРОЩЕННАЯ ВЕРСИЯ */
+        .post-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .post-image-container {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+            background: #f5f7fa;
+        }
+
+        .post-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .post-card:hover .post-image-container img {
+            transform: scale(1.05);
+        }
+
+        /* Галерея фото */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            height: 100%;
+        }
+
+        .photo-item {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .no-photo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--gray);
+            padding: 20px;
+        }
+
+        .no-photo i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+
+        .post-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .status-published {
+            background: rgba(46, 125, 50, 0.95);
+            color: white;
+        }
+
+        .status-scheduled {
+            background: rgba(255, 152, 0, 0.95);
+            color: white;
+        }
+
+        .status-draft {
+            background: rgba(97, 97, 97, 0.95);
+            color: white;
+        }
+
+        .post-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .post-date {
+            font-weight: 600;
+        }
+
+        .post-platform {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .post-text {
+            margin-bottom: 20px;
+            flex-grow: 1;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Загрузка и пустые состояния */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .page-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--dark);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-number {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .page-number:hover {
+            background: var(--gray-light);
+        }
+
+        .page-number.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Модальное окно просмотра фото */
+        .photo-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .photo-modal.show {
+            display: flex;
+        }
+
+        .photo-modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .photo-modal-img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .photo-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .photo-modal-prev,
+        .photo-modal-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .photo-modal-prev:hover,
+        .photo-modal-next:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .photo-modal-prev {
+            left: -60px;
+        }
+
+        .photo-modal-next {
+            right: -60px;
+        }
+
+        .photo-modal-info {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Подвал */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .footer-social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .section-header h1 {
+                font-size: 28px;
+            }
+            
+            .section-header p {
+                font-size: 16px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-panel {
+                padding: 20px;
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .photo-modal-prev,
+            .photo-modal-next {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .photo-modal-prev {
+                left: -50px;
+            }
+            
+            .photo-modal-next {
+                right: -50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .section-header h1 {
+                font-size: 24px;
+            }
+            
+            .post-content {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                margin: 10px;
+            }
+            
+            .photo-modal-prev,
+            .photo-modal-next {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+                top: auto;
+                bottom: -50px;
+            }
+            
+            .photo-modal-prev {
+                left: 30%;
+            }
+            
+            .photo-modal-next {
+                right: 30%;
+            }
+            
+            .photo-modal-close {
+                top: -35px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Официальный дилер</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                            <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                            <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                            <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                            <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
+                            <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                            <!-- Пункт "Публикация" будет отображаться только для админов через auth.js -->
+                        </ul>
+                    </nav>
+
+                    <div class="auth-section" id="auth-section">
+                        <!-- Будет заполнено через auth.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основная секция -->
+    <section class="posts-section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fab fa-vk"></i> Публикации ВКонтакте</h1>
+                <p>Все посты с фотографиями, опубликованные в группе АвтоМир</p>
+            </div>
+
+            <!-- Панель фильтров -->
+            <div class="filters-panel">
+                <h2>Фильтры</h2>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="statusFilter"><i class="fas fa-filter"></i> Статус</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="all">Все посты</option>
+                            <option value="published">Опубликованные</option>
+                            <option value="scheduled">Запланированные</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFilter"><i class="fas fa-calendar"></i> Дата</label>
+                        <select id="dateFilter" class="form-control">
+                            <option value="all">Все даты</option>
+                            <option value="today">Сегодня</option>
+                            <option value="week">За неделю</option>
+                            <option value="month">За месяц</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="searchFilter"><i class="fas fa-search"></i> Поиск</label>
+                        <input type="text" id="searchFilter" class="form-control" placeholder="Поиск по тексту...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-image"></i> Фото</label>
+                        <select id="photoFilter" class="form-control">
+                            <option value="all">Все посты</option>
+                            <option value="with-photo">Только с фото</option>
+                            <option value="without-photo">Без фото</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контейнер постов -->
+            <div id="postsContainer">
+                <div class="loading" id="loadingState">
+                    <div class="loading-spinner"></div>
+                    <p>Загружаем посты...</p>
+                </div>
+            </div>
+
+            <!-- Пагинация -->
+            <div class="pagination" id="pagination" style="display: none;">
+                <button class="page-btn" id="prevPage" disabled>
+                    <i class="fas fa-chevron-left"></i> Назад
+                </button>
+                <div class="page-numbers" id="pageNumbers"></div>
+                <button class="page-btn" id="nextPage">
+                    Вперед <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно просмотра фото -->
+    <div class="photo-modal" id="photoModal">
+        <div class="photo-modal-content">
+            <button class="photo-modal-close" id="photoModalClose">&times;</button>
+            <button class="photo-modal-prev" id="photoModalPrev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <img class="photo-modal-img" id="photoModalImg" src="" alt="Просмотр фото">
+            <button class="photo-modal-next" id="photoModalNext">
+                <i class="fas fa-chevron-right"></i>
+        
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир</h3>
+                    <p>Ваш надежный партнер в мире автомобилей. Более 15 лет на рынке автомобильных услуг.</p>
+                    <div class="footer-social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="vk-publish.html"><i class="fas fa-chevron-right"></i> Публикации ВК</a></li>
+                        <li><a href="vk-posts.html"><i class="fas fa-chevron-right"></i> Просмотр постов</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Уфа, ул. Кирова, д. 5</a></li>
+                        <li><a href="tel:+73471234567"><i class="fas fa-phone"></i> +7 (347) 123-45-67</a></li>
+                        <li><a href="mailto:info@avtomir-ufa.ru"><i class="fas fa-envelope"></i> info@avtomir-ufa.ru</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00-21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Автосалон "АвтоМир". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Конфигурация
+        const VK_TOKEN = 'vk1.a.pNsP-E7EBatEl9r2x-fT8AfPi5VbOWDDKFtP8NkamQEZsSFQULVvsoNIggxNTgyKdbm247Uvsp4VyJOPpzZehocYVnbgctTuCusDswwuRo31Pj5m9kEOsJ-PY8KZn7GzH699yTzrPA4A0-Xl5Q-hubvILm5ZBfplsO_fKofAQkt6z-jV4IyK2vtOENBu3iI8MQEZ4wdca8F6az3Taf0WzA';
+        const GROUP_ID = '-233768802';
+        
+        // Состояние приложения
+        let allPosts = [];
+        let filteredPosts = [];
+        let currentPage = 1;
+        const postsPerPage = 6;
+        let currentPhotos = [];
+        let currentPhotoIndex = 0;
+
+        // Используем функцию уведомлений из auth.js
+        function showNotification(message, type = 'success') {
+            if (window.AuthSystem && window.AuthSystem.showNotification) {
+                window.AuthSystem.showNotification(message, type);
+            } else {
+                // Резервная реализация
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 8px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                    animation: fadeInOut 3s ease;
+                    font-weight: 600;
+                `;
+                
+                notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i> ${message}`;
+                document.body.appendChild(notification);
+                
+                // Удаляем через 3 секунды
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 3000);
+            }
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+            setupFilters();
+            setupPhotoModal();
+            
+            // Загрузка состояния из localStorage
+            const savedFilters = localStorage.getItem('vkPostsFilters');
+            if (savedFilters) {
+                const filters = JSON.parse(savedFilters);
+                document.getElementById('statusFilter').value = filters.status || 'all';
+                document.getElementById('dateFilter').value = filters.date || 'all';
+                document.getElementById('searchFilter').value = filters.search || '';
+                document.getElementById('photoFilter').value = filters.photo || 'all';
+            }
+        });
+
+        // Загрузка постов
+        async function loadPosts() {
+            showLoading();
+            
+            try {
+                // Получаем посты из ВК
+                const vkPosts = await getVKPosts();
+                
+                // Получаем локальную историю
+                const localHistory = JSON.parse(localStorage.getItem('vk_publish_history') || '[]');
+                
+                // Объединяем данные
+                allPosts = combinePosts(vkPosts, localHistory);
+                
+                // Фильтрация и отображение
+                applyFilters();
+                
+            } catch (error) {
+                console.error('Ошибка загрузки постов:', error);
+                showError('Не удалось загрузить посты: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Получение постов из ВК API
+        async function getVKPosts() {
+            try {
+                // Используем JSONP для обхода CORS
+                const result = await callVKAPI('wall.get', {
+                    owner_id: GROUP_ID,
+                    count: 100,
+                    extended: 1
+                });
+                
+                return result.items || [];
+                
+            } catch (error) {
+                console.error('Ошибка получения постов из ВК:', error);
+                return [];
+            }
+        }
+
+        // JSONP функция для обхода CORS
+        function callVKAPI(method, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                
+                const baseParams = {
+                    access_token: VK_TOKEN,
+                    v: '5.199'
+                };
+                
+                const allParams = { ...baseParams, ...params };
+                allParams.callback = callbackName;
+                
+                const paramString = Object.keys(allParams)
+                    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(allParams[key])}`)
+                    .join('&');
+                
+                const url = `https://api.vk.com/method/${method}?${paramString}`;
+                
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    
+                    if (data.error) {
+                        reject(new Error(`VK API: ${data.error.error_msg} (код: ${data.error.error_code})`));
+                    } else {
+                        resolve(data.response);
+                    }
+                };
+                
+                script.onerror = function() {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('Ошибка загрузки скрипта VK API'));
+                };
+                
+                script.src = url;
+                document.body.appendChild(script);
+            });
+        }
+
+        // Объединение постов из ВК и локальной истории
+        function combinePosts(vkPosts, localHistory) {
+            const combined = [];
+            
+            // Добавляем посты из ВК
+            vkPosts.forEach(vkPost => {
+                if (!vkPost.marked_as_ads && !vkPost.is_pinned) {
+                    const photos = extractPhotosFromAttachments(vkPost.attachments);
+                    
+                    combined.push({
+                        id: vkPost.id,
+                        text: vkPost.text || '',
+                        date: new Date(vkPost.date * 1000),
+                        status: 'published',
+                        attachments: vkPost.attachments,
+                        photos: photos,
+                        hasPhotos: photos.length > 0,
+                        source: 'vk'
+                    });
+                }
+            });
+            
+            // Добавляем посты из локальной истории
+            localHistory.forEach(historyItem => {
+                // Находим соответствующий пост из ВК
+                const existingPost = combined.find(post => 
+                    post.source === 'vk' && post.id.toString() === historyItem.postId.toString()
+                );
+                
+                if (!existingPost && historyItem.success && historyItem.postId !== 'error') {
+                    // Извлекаем фото из локальной истории
+                    const photoIds = extractPhotoIdsFromLocalHistory(historyItem);
+                    const photos = photoIds.map(id => ({
+                        id: id,
+                        url: getVKPhotoUrl(id)
+                    }));
+                    
+                    combined.push({
+                        id: historyItem.id,
+                        text: historyItem.text || '',
+                        date: new Date(historyItem.timestamp),
+                        status: historyItem.success ? 'published' : 'draft',
+                        attachments: [],
+                        photos: photos,
+                        hasPhotos: photos.length > 0,
+                        source: 'local',
+                        localId: historyItem.id,
+                        postId: historyItem.postId
+                    });
+                }
+            });
+            
+            // Сортируем по дате (сначала новые)
+            return combined.sort((a, b) => b.date - a.date);
+        }
+
+        // Извлечение фото из вложений ВК
+        function extractPhotosFromAttachments(attachments) {
+            if (!attachments) return [];
+            
+            const photos = [];
+            
+            attachments.forEach(attachment => {
+                if (attachment.type === 'photo') {
+                    // Находим самое большое изображение
+                    const maxSize = attachment.photo.sizes.reduce((max, size) => 
+                        size.width * size.height > max.width * max.height ? size : max
+                    );
+                    
+                    photos.push({
+                        id: `${attachment.photo.owner_id}_${attachment.photo.id}`,
+                        url: maxSize.url,
+                        width: maxSize.width,
+                        height: maxSize.height
+                    });
+                }
+            });
+            
+            return photos;
+        }
+
+        // Извлечение ID фото из локальной истории
+        function extractPhotoIdsFromLocalHistory(historyItem) {
+            const photoIds = [];
+            
+            // Пытаемся извлечь из текста или данных
+            if (historyItem.text) {
+                // Ищем ссылки на фото ВК в тексте
+                const photoPatterns = [
+                    /photo(-?\d+_\d+)/g,
+                    /vk\.com\/photo(-?\d+_\d+)/g
+                ];
+                
+                photoPatterns.forEach(pattern => {
+                    const matches = historyItem.text.match(pattern);
+                    if (matches) {
+                        matches.forEach(match => {
+                            const idMatch = match.match(/(-?\d+_\d+)/);
+                            if (idMatch) {
+                                photoIds.push(idMatch[1]);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            return [...new Set(photoIds)]; // Убираем дубликаты
+        }
+
+        // Получение URL фото ВК по ID
+        function getVKPhotoUrl(photoId) {
+            // Пробуем разные варианты URL для фото ВК
+            const [ownerId, photoIdNum] = photoId.split('_');
+            const urls = [
+                `https://sun9-71.userapi.com/impg/${ownerId}/${photoIdNum}.jpg`,
+                `https://sun1-87.userapi.com/impg/${ownerId}/${photoIdNum}.jpg`,
+                `https://sun9-74.userapi.com/impg/${ownerId}/${photoIdNum}.jpg`,
+                `https://sun9-77.userapi.com/impg/${ownerId}/${photoIdNum}.jpg`
+            ];
+            
+            return urls[0]; // Возвращаем первый URL
+        }
+
+        // Настройка фильтров
+        function setupFilters() {
+            const filters = ['statusFilter', 'dateFilter', 'searchFilter', 'photoFilter'];
+            
+            filters.forEach(filterId => {
+                document.getElementById(filterId).addEventListener('change', function() {
+                    saveFilters();
+                    applyFilters();
+                });
+            });
+            
+            // Поиск при вводе
+            document.getElementById('searchFilter').addEventListener('input', function() {
+                saveFilters();
+                applyFilters();
+            });
+        }
+
+        // Сохранение фильтров
+        function saveFilters() {
+            const filters = {
+                status: document.getElementById('statusFilter').value,
+                date: document.getElementById('dateFilter').value,
+                search: document.getElementById('searchFilter').value,
+                photo: document.getElementById('photoFilter').value
+            };
+            
+            localStorage.setItem('vkPostsFilters', JSON.stringify(filters));
+        }
+
+        // Применение фильтров
+        function applyFilters() {
+            let result = [...allPosts];
+            
+            // Фильтр по статусу
+            const statusFilter = document.getElementById('statusFilter').value;
+            if (statusFilter !== 'all') {
+                result = result.filter(post => post.status === statusFilter);
+            }
+            
+            // Фильтр по дате
+            const dateFilter = document.getElementById('dateFilter').value;
+            const now = new Date();
+            
+            if (dateFilter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                result = result.filter(post => post.date >= today);
+            } else if (dateFilter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                result = result.filter(post => post.date >= weekAgo);
+            } else if (dateFilter === 'month') {
+                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                result = result.filter(post => post.date >= monthAgo);
+            }
+            
+            // Фильтр по фото
+            const photoFilter = document.getElementById('photoFilter').value;
+            if (photoFilter === 'with-photo') {
+                result = result.filter(post => post.hasPhotos);
+            } else if (photoFilter === 'without-photo') {
+                result = result.filter(post => !post.hasPhotos);
+            }
+            
+            // Фильтр по поиску
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            if (searchFilter) {
+                result = result.filter(post => 
+                    post.text.toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            filteredPosts = result;
+            currentPage = 1;
+            renderPosts();
+            renderPagination();
+        }
+
+        // Отображение постов
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fab fa-vk"></i>
+                        </div>
+                        <h3>Постов не найдено</h3>
+                        <p>Попробуйте изменить параметры фильтрации или опубликуйте первый пост</p>
+                        <a href="vk-publish.html" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Создать пост
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Вычисляем посты для текущей страницы
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const pagePosts = filteredPosts.slice(startIndex, endIndex);
+            
+            container.innerHTML = '';
+            
+            pagePosts.forEach(post => {
+                const postElement = createPostElement(post);
+                container.appendChild(postElement);
+            });
+        }
+
+        // Создание элемента поста
+        function createPostElement(post) {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            
+            // Форматируем дату
+            const formattedDate = post.date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Обрезаем текст для предпросмотра
+            const shortText = post.text.length > 200 ? 
+                post.text.substring(0, 197) + '...' : post.text;
+            
+            // Определяем статус
+            let statusClass = 'status-published';
+            let statusText = 'Опубликован';
+            
+            if (post.status === 'scheduled') {
+                statusClass = 'status-scheduled';
+                statusText = 'Запланирован';
+            } else if (post.status === 'draft') {
+                statusClass = 'status-draft';
+                statusText = 'Черновик';
+            }
+            
+            // Создаем HTML для фото
+            let imageHtml = '';
+            
+            if (post.hasPhotos && post.photos.length > 0) {
+                if (post.photos.length === 1) {
+                    // Одно фото - показываем полностью
+                    imageHtml = `
+                        <div class="post-image-container">
+                            <img src="${post.photos[0].url}" 
+                                 alt="Фото поста" 
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/350x220/f0f0f0/cccccc?text=Фото+не+загружено';"
+                                 onclick="openPhotoGallery(${post.id}, '${post.source}', 0)">
+                            <span class="post-status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                } else if (post.photos.length === 2) {
+                    // Два фото - показываем сеткой 2x1
+                    imageHtml = `
+                        <div class="post-image-container">
+                            <div class="photo-gallery" style="grid-template-columns: repeat(2, 1fr);">
+                                <div class="photo-item" onclick="openPhotoGallery(${post.id}, '${post.source}', 0)">
+                                    <img src="${post.photos[0].url}" 
+                                         alt="Фото 1"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/175x220/f0f0f0/cccccc?text=Фото+1';">
+                                </div>
+                                <div class="photo-item" onclick="openPhotoGallery(${post.id}, '${post.source}', 1)">
+                                    <img src="${post.photos[1].url}" 
+                                         alt="Фото 2"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/175x220/f0f0f0/cccccc?text=Фото+2';">
+                                </div>
+                            </div>
+                            <span class="post-status ${statusClass}">${statusText}</span>
+                            <div class="photo-count">+${post.photos.length}</div>
+                        </div>
+                    `;
+                } else {
+                    // Много фото - показываем сетку 3x2 с последним элементом показывающим количество
+                    imageHtml = `
+                        <div class="post-image-container">
+                            <div class="photo-gallery">
+                    `;
+                    
+                    // Показываем первые 5 фото
+                    const displayPhotos = Math.min(post.photos.length, 5);
+                    for (let i = 0; i < displayPhotos; i++) {
+                        if (i === 4 && post.photos.length > 5) {
+                            // Последний элемент показывает количество оставшихся фото
+                            imageHtml += `
+                                <div class="photo-item" onclick="openPhotoGallery(${post.id}, '${post.source}', 4)">
+                                    <div style="background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                                        +${post.photos.length - 4}
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            imageHtml += `
+                                <div class="photo-item" onclick="openPhotoGallery(${post.id}, '${post.source}', ${i})">
+                                    <img src="${post.photos[i].url}" 
+                                         alt="Фото ${i+1}"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/116x110/f0f0f0/cccccc?text=Фото+${i+1}';">
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    imageHtml += `
+                            </div>
+                            <span class="post-status ${statusClass}">${statusText}</span>
+                            <div class="photo-count">${post.photos.length} фото</div>
+                        </div>
+                    `;
+                }
+            } else {
+                // Нет фото
+                imageHtml = `
+                    <div class="post-image-container">
+                        <div class="no-photo">
+                            <i class="fas fa-image"></i>
+                            <div>Нет фотографий</div>
+                        </div>
+                        <span class="post-status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            }
+            
+            postCard.innerHTML = `
+                ${imageHtml}
+                
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span class="post-date">${formattedDate}</span>
+                        <span class="post-platform">
+                            <i class="fab fa-vk"></i> ВКонтакте
+                        </span>
+                    </div>
+                    
+                    <div class="post-text">
+                        ${shortText.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+            `;
+            
+            // Сохраняем данные поста для использования
+            postCard.dataset.postId = post.id;
+            postCard.dataset.postSource = post.source;
+            
+            return postCard;
+        }
+
+        // Пагинация
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+            const pagination = document.getElementById('pagination');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageNumbers = document.getElementById('pageNumbers');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Генерация номеров страниц
+            pageNumbers.innerHTML = '';
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            // Если в начале
+            if (currentPage <= 3) {
+                endPage = Math.min(5, totalPages);
+            }
+            
+            // Если в конце
+            if (currentPage >= totalPages - 2) {
+                startPage = Math.max(1, totalPages - 4);
+            }
+            
+            // Первая страница
+            if (startPage > 1) {
+                addPageNumber(1);
+                if (startPage > 2) {
+                    pageNumbers.innerHTML += '<span style="align-self: center;">...</span>';
+                }
+            }
+            
+            // Основные страницы
+            for (let i = startPage; i <= endPage; i++) {
+                addPageNumber(i);
+            }
+            
+            // Последняя страница
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pageNumbers.innerHTML += '<span style="align-self: center;">...</span>';
+                }
+                addPageNumber(totalPages);
+            }
+            
+            // Обработчики событий
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPosts();
+                    renderPagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPosts();
+                    renderPagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            
+            function addPageNumber(page) {
+                const pageElement = document.createElement('div');
+                pageElement.className = `page-number ${page === currentPage ? 'active' : ''}`;
+                pageElement.textContent = page;
+                pageElement.onclick = () => {
+                    if (page !== currentPage) {
+                        currentPage = page;
+                        renderPosts();
+                        renderPagination();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                };
+                pageNumbers.appendChild(pageElement);
+            }
+        }
+
+        // Настройка модального окна фото
+        function setupPhotoModal() {
+            const photoModal = document.getElementById('photoModal');
+            const photoModalClose = document.getElementById('photoModalClose');
+            const photoModalPrev = document.getElementById('photoModalPrev');
+            const photoModalNext = document.getElementById('photoModalNext');
+            
+            // Закрытие модального окна
+            photoModalClose.onclick = () => {
+                photoModal.classList.remove('show');
+            };
+            
+            // Закрытие при клике вне окна
+            photoModal.onclick = (e) => {
+                if (e.target === photoModal) {
+                    photoModal.classList.remove('show');
+                }
+            };
+            
+            // Навигация по фото
+            photoModalPrev.onclick = () => {
+                if (currentPhotoIndex > 0) {
+                    currentPhotoIndex--;
+                    updatePhotoModal();
+                }
+            };
+            
+            photoModalNext.onclick = () => {
+                if (currentPhotoIndex < currentPhotos.length - 1) {
+                    currentPhotoIndex++;
+                    updatePhotoModal();
+                }
+            };
+            
+            // Закрытие по ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && photoModal.classList.contains('show')) {
+                    photoModal.classList.remove('show');
+                } else if (e.key === 'ArrowLeft' && photoModal.classList.contains('show')) {
+                    photoModalPrev.click();
+                } else if (e.key === 'ArrowRight' && photoModal.classList.contains('show')) {
+                    photoModalNext.click();
+                }
+            });
+        }
+
+        // Открытие галереи фото
+        function openPhotoGallery(postId, source, photoIndex) {
+            // Находим пост
+            let post;
+            if (source === 'vk') {
+                post = allPosts.find(p => p.id === postId && p.source === 'vk');
+            } else {
+                post = allPosts.find(p => p.localId === postId && p.source === 'local');
+            }
+            
+            if (!post || !post.hasPhotos) {
+                return;
+            }
+            
+            // Сохраняем текущие фото и индекс
+            currentPhotos = post.photos;
+            currentPhotoIndex = parseInt(photoIndex) || 0;
+            
+            // Обновляем модальное окно
+            updatePhotoModal();
+            
+            // Показываем модальное окно
+            document.getElementById('photoModal').classList.add('show');
+        }
+
+        // Обновление модального окна фото
+        function updatePhotoModal() {
+            if (currentPhotos.length === 0) return;
+            
+            const currentPhoto = currentPhotos[currentPhotoIndex];
+            const photoModalImg = document.getElementById('photoModalImg');
+            const currentPhotoSpan = document.getElementById('currentPhoto');
+            const totalPhotosSpan = document.getElementById('totalPhotos');
+            const photoModalPrev = document.getElementById('photoModalPrev');
+            const photoModalNext = document.getElementById('photoModalNext');
+            
+            // Устанавливаем фото
+            photoModalImg.src = currentPhoto.url;
+            
+            // Обновляем информацию
+            currentPhotoSpan.textContent = currentPhotoIndex + 1;
+            totalPhotosSpan.textContent = currentPhotos.length;
+            
+            // Показываем/скрываем кнопки навигации
+            photoModalPrev.style.display = currentPhotoIndex > 0 ? 'flex' : 'none';
+            photoModalNext.style.display = currentPhotoIndex < currentPhotos.length - 1 ? 'flex' : 'none';
+        }
+
+        // Вспомогательные функции
+        function getStatusText(status) {
+            switch(status) {
+                case 'published': return 'Опубликован';
+                case 'scheduled': return 'Запланирован';
+                case 'draft': return 'Черновик';
+                default: return 'Неизвестно';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Ошибка загрузки</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="loadPosts()">
+                        <i class="fas fa-redo"></i> Повторить попытку
+                    </button>
+                </div>
+            `;
+        }
+
+        // Автоматическое обновление постов
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                loadPosts();
+            }
+        }, 60000); // Обновлять каждую минуту
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Создаем тестового пользователя если его нет
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.length === 0) {
+                users.push({
+                    username: 'demo',
+                    password: '123456',
+                    firstName: 'Иван',
+                    lastName: 'Иванов',
+                    patronymic: 'Иванович',
+                    phone: '+7 (999) 123-45-67',
+                    name: 'Иванов Иван Иванович',
+                    initials: 'ИИ'
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автоматически инициализируется через auth.js
+            // Дополнительная логика для страницы (если есть)
+        });
+    </script>
+</body>
+</html>

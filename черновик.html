@@ -1,0 +1,616 @@
+Отлично! У меня есть все нужные файлы. Теперь создам систему ролей с администратором, прописанным в коде. Вот полное решение:
+
+## **1. Обновленный auth.js с системой ролей**
+
+```javascript
+// auth.js - Общая система авторизации для всех страниц С РОЛЯМИ
+
+// Состояние пользователя с ролями
+let userState = {
+    isLoggedIn: false,
+    userName: '',
+    userLogin: '',
+    userInitials: '',
+    role: 'guest', // 'guest', 'user', 'admin'
+    permissions: []
+};
+
+// Администратор, прописанный в коде (НЕЛЬЗЯ ЗАРЕГИСТРИРОВАТЬ НОВОГО!)
+const ADMIN_CREDENTIALS = {
+    username: 'admin',
+    password: 'admin123', // пароль администратора
+    role: 'admin',
+    name: 'Администратор Системы',
+    initials: 'АС',
+    permissions: ['all']
+};
+
+// Разрешения для ролей
+const ROLE_PERMISSIONS = {
+    guest: ['view_public', 'view_services'],
+    user: ['view_public', 'view_services', 'book_service', 'view_profile'],
+    admin: ['all', 'publish_vk', 'manage_users', 'view_admin_panel']
+};
+
+// Загрузка состояния из localStorage
+function loadUserState() {
+    const saved = localStorage.getItem('userState');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        userState = { ...userState, ...parsed };
+        updatePermissions();
+    }
+}
+
+// Сохранение состояния в localStorage
+function saveUserState() {
+    localStorage.setItem('userState', JSON.stringify(userState));
+}
+
+// Обновление разрешений на основе роли
+function updatePermissions() {
+    userState.permissions = ROLE_PERMISSIONS[userState.role] || [];
+}
+
+// Проверка прав
+function hasPermission(permission) {
+    return userState.permissions.includes('all') || userState.permissions.includes(permission);
+}
+
+// Проверка на администратора
+function isAdmin() {
+    return userState.role === 'admin' && userState.isLoggedIn;
+}
+
+// Проверка на обычного пользователя
+function isUser() {
+    return userState.role === 'user' && userState.isLoggedIn;
+}
+
+// Проверка на гостя
+function isGuest() {
+    return !userState.isLoggedIn || userState.role === 'guest';
+}
+
+// Инициализация шапки на всех страницах
+function initHeader() {
+    loadUserState();
+    renderAuthSection();
+    setupMobileMenu();
+    updateNavigation();
+}
+
+// Рендер секции авторизации
+function renderAuthSection() {
+    const authSection = document.getElementById('auth-section');
+    if (!authSection) return;
+    
+    if (userState.isLoggedIn) {
+        // Добавляем бейдж роли
+        const roleBadge = userState.role === 'admin' ? 
+            `<span class="role-badge admin" style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 5px;">Админ</span>` : 
+            `<span class="role-badge user" style="background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 5px;">Пользователь</span>`;
+        
+        authSection.innerHTML = `
+            <div class="user-profile" id="user-profile">
+                <div class="user-avatar" style="background: ${userState.role === 'admin' ? '#dc3545' : '#ff6b35'};">${userState.userInitials}</div>
+                <div class="user-name">${userState.userName} ${roleBadge}</div>
+                <div class="user-menu" id="user-menu">
+                    ${hasPermission('view_profile') ? `
+                    <a href="profile.html" class="user-menu-item">
+                        <i class="fas fa-user"></i> Мой профиль
+                    </a>
+                    ` : ''}
+                    ${hasPermission('view_admin_panel') ? `
+                    <a href="news.html" class="user-menu-item admin-only">
+                        <i class="fab fa-vk"></i> Публикация ВК
+                    </a>
+                    ` : ''}
+                    <button class="user-menu-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Обработчики для меню пользователя
+        const userProfile = document.getElementById('user-profile');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (userProfile && userMenu) {
+            userProfile.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function() {
+                userMenu.classList.remove('show');
+            });
+        }
+    } else {
+        authSection.innerHTML = `
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-small">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </a>
+                <a href="register.html" class="btn btn-small btn-outline">
+                    <i class="fas fa-user-plus"></i> Регистрация
+                </a>
+            </div>
+        `;
+    }
+}
+
+// Обновление навигации в зависимости от роли
+function updateNavigation() {
+    // Скрываем/показываем ссылку на публикацию ВК
+    const vkLink = document.querySelector('a[href="news.html"]');
+    if (vkLink) {
+        if (hasPermission('publish_vk')) {
+            vkLink.style.display = '';
+            vkLink.innerHTML = '<i class="fas fa-chevron-right"></i> Публикация ВК';
+        } else {
+            vkLink.style.display = 'none';
+        }
+    }
+}
+
+// Мобильное меню
+function setupMobileMenu() {
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const navContainer = document.querySelector('.nav-container');
+    
+    if (mobileMenu && navContainer) {
+        mobileMenu.addEventListener('click', function() {
+            navContainer.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!navContainer.contains(e.target) && !mobileMenu.contains(e.target)) {
+                navContainer.classList.remove('show');
+            }
+        });
+    }
+}
+
+// Функция входа
+function login(username, password) {
+    // Проверка на администратора
+    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        userState.isLoggedIn = true;
+        userState.userLogin = ADMIN_CREDENTIALS.username;
+        userState.userName = ADMIN_CREDENTIALS.name;
+        userState.userInitials = ADMIN_CREDENTIALS.initials;
+        userState.role = ADMIN_CREDENTIALS.role;
+        updatePermissions();
+        
+        saveUserState();
+        return { success: true, role: 'admin' };
+    }
+    
+    // Проверка обычных пользователей
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+        userState.isLoggedIn = true;
+        userState.userLogin = username;
+        userState.userName = user.name || username;
+        userState.userInitials = user.initials || username.charAt(0).toUpperCase();
+        userState.role = 'user'; // Все обычные пользователи получают роль 'user'
+        updatePermissions();
+        
+        saveUserState();
+        return { success: true, role: 'user' };
+    }
+    
+    return { success: false, message: 'Неверный логин или пароль' };
+}
+
+// Функция выхода
+function logout() {
+    userState.isLoggedIn = false;
+    userState.userName = '';
+    userState.userLogin = '';
+    userState.userInitials = '';
+    userState.role = 'guest';
+    userState.permissions = [];
+    
+    saveUserState();
+    renderAuthSection();
+    updateNavigation();
+    showNotification('Вы успешно вышли из системы', 'info');
+    
+    // Перенаправление на главную страницу
+    setTimeout(() => {
+        if (window.location.pathname.includes('news.html') && !hasPermission('publish_vk')) {
+            window.location.href = 'index.html';
+        }
+    }, 1000);
+}
+
+// Уведомления
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#2196F3'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 3000;
+        animation: slideIn 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    `;
+    
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : type === 'warning' ? 'exclamation-triangle' : 'info'}-circle"></i>
+        <span>${message}</span>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Защита страницы публикации ВК
+function protectVKPage() {
+    if (!hasPermission('publish_vk')) {
+        showNotification('Доступ запрещен. Требуются права администратора', 'error');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        return false;
+    }
+    return true;
+}
+
+// Проверка доступа при записи на услугу
+function checkServiceAccess() {
+    if (isGuest()) {
+        showNotification('Для записи на услугу необходимо авторизоваться', 'warning');
+        setTimeout(() => {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        }, 1500);
+        return false;
+    }
+    return true;
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    initHeader();
+    
+    // Добавляем стили для бейджей ролей
+    const style = document.createElement('style');
+    style.textContent = `
+        .role-badge {
+            font-size: 10px !important;
+            padding: 2px 8px !important;
+            border-radius: 10px !important;
+            margin-left: 5px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+        }
+        .admin-only {
+            background: rgba(220, 53, 69, 0.1) !important;
+            border-left: 3px solid #dc3545 !important;
+        }
+        .user-menu-item.admin-only {
+            color: #dc3545 !important;
+        }
+    `;
+    document.head.appendChild(style);
+});
+```
+
+## **2. Обновленный login.html с проверкой администратора**
+
+Добавьте этот скрипт в конец файла `login.html` (перед `</body>`):
+
+```html
+<script>
+    // Переопределяем обработчик формы входа
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                
+                const result = login(username, password);
+                
+                if (result.success) {
+                    showNotification(`Успешный вход как ${result.role === 'admin' ? 'Администратор' : 'Пользователь'}!`, 'success');
+                    
+                    // Перенаправление в зависимости от роли
+                    setTimeout(() => {
+                        if (result.role === 'admin') {
+                            // Админа перенаправляем на страницу публикации ВК
+                            window.location.href = 'news.html';
+                        } else {
+                            // Обычного пользователя на главную
+                            window.location.href = 'index.html';
+                        }
+                    }, 1500);
+                } else {
+                    showNotification(result.message || 'Неверный логин или пароль!', 'error');
+                }
+            });
+        }
+        
+        initHeader();
+    });
+</script>
+```
+
+## **3. Обновленный register.html - только обычные пользователи**
+
+В файле `register.html` убедитесь, что после регистрации устанавливается роль 'user':
+
+```javascript
+// В обработчике формы регистрации добавьте:
+document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // ... существующий код валидации ...
+    
+    // Создание нового пользователя
+    const newUser = {
+        username: username,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        patronymic: patronymic,
+        phone: phone,
+        name: `${lastName} ${firstName} ${patronymic}`.trim(),
+        initials: (firstName[0] + lastName[0]).toUpperCase(),
+        role: 'user' // ВСЕГДА 'user' для регистрирующихся
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Автоматический вход после регистрации
+    const loginResult = login(username, password);
+    
+    if (loginResult.success) {
+        showNotification('Регистрация прошла успешно! Вы вошли как пользователь.', 'success');
+        
+        // Перенаправление на главную (НЕ на публикацию ВК!)
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+    }
+});
+```
+
+## **4. Защита страницы news.html (публикация ВК)**
+
+В файле `news.html` добавьте в начало тега `<script>` (после открывающего тега):
+
+```javascript
+// Защита страницы - только для админов
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем права доступа
+    loadUserState();
+    
+    if (!hasPermission('publish_vk')) {
+        // Если не админ - показываем сообщение и редирект
+        const vkSection = document.querySelector('.vk-section');
+        if (vkSection) {
+            vkSection.innerHTML = `
+                <div class="container" style="text-align: center; padding: 100px 20px;">
+                    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
+                        <div style="font-size: 80px; color: #dc3545; margin-bottom: 20px;">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h2 style="color: #333; margin-bottom: 20px;">Доступ запрещен</h2>
+                        <p style="color: #666; margin-bottom: 30px; font-size: 18px;">
+                            Страница публикации в ВКонтакте доступна только администраторам системы.
+                        </p>
+                        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                            <a href="index.html" class="btn" style="background: var(--primary); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none;">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                            <a href="login.html" class="btn" style="background: var(--secondary); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none;">
+                                <i class="fas fa-sign-in-alt"></i> Войти как администратор
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        showNotification('Требуются права администратора для доступа к этой странице', 'error');
+        
+        // Автоматический редирект через 5 секунд
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000);
+        return;
+    }
+    
+    // Если админ - продолжаем инициализацию страницы
+    initHeader();
+    // ... остальной код инициализации news.html ...
+});
+```
+
+## **5. Обновление services.html - проверка авторизации**
+
+В файле `services.html` обновите функцию `showServiceModal`:
+
+```javascript
+function showServiceModal(serviceName) {
+    // ПРОВЕРКА АВТОРИЗАЦИИ
+    if (!checkServiceAccess()) {
+        return; // Прерываем выполнение если гость
+    }
+    
+    // ... остальной код функции ...
+}
+```
+
+И добавьте вызов `initHeader()` в DOMContentLoaded:
+
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+    initHeader(); // Добавляем эту строку
+    // ... остальной код ...
+});
+```
+
+## **6. Обновление index.html**
+
+В `index.html` также добавьте:
+
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+    initHeader(); // Убедитесь, что это есть
+    
+    // Показываем информацию о роли пользователя
+    if (isAdmin()) {
+        console.log('Текущий пользователь: Администратор');
+        // Можно добавить визуальное отображение
+        const authSection = document.getElementById('auth-section');
+        if (authSection) {
+            const adminBadge = document.createElement('div');
+            adminBadge.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: #dc3545;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 10px;
+                font-size: 10px;
+                font-weight: bold;
+            `;
+            adminBadge.textContent = 'АДМИН';
+            authSection.appendChild(adminBadge);
+        }
+    }
+});
+```
+
+## **7. Файл admin-check.js (дополнительный)**
+
+Создайте новый файл `admin-check.js` для быстрой проверки на страницах:
+
+```javascript
+// admin-check.js - Быстрая проверка прав администратора
+
+// Проверяем при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Если мы на странице публикации ВК, проверяем права
+    if (window.location.pathname.includes('news.html')) {
+        loadUserState();
+        if (!hasPermission('publish_vk')) {
+            // Создаем экран блокировки
+            document.body.innerHTML = `
+                <div style="
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(135deg, #326BF6 0%, #ff6b35 100%);
+                    padding: 20px;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 50px;
+                        border-radius: 20px;
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                        max-width: 500px;
+                        width: 100%;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 80px; color: #dc3545; margin-bottom: 20px;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h1 style="color: #333; margin-bottom: 20px;">Административный доступ</h1>
+                        <p style="color: #666; margin-bottom: 30px; font-size: 18px;">
+                            Эта страница доступна только администраторам системы.
+                        </p>
+                        
+                        <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                            <h3 style="color: #333; margin-bottom: 15px;">Учетные данные администратора:</h3>
+                            <div style="text-align: left; background: white; padding: 15px; border-radius: 8px; border: 2px dashed #ddd;">
+                                <p style="margin: 5px 0;"><strong>Логин:</strong> admin</p>
+                                <p style="margin: 5px 0;"><strong>Пароль:</strong> admin123</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <a href="index.html" class="btn" style="
+                                background: var(--primary);
+                                color: white;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                                font-weight: 600;
+                            ">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                            <a href="login.html" class="btn" style="
+                                background: var(--secondary);
+                                color: white;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                                font-weight: 600;
+                            ">
+                                <i class="fas fa-sign-in-alt"></i> Войти как администратор
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+});
+```
+
+## **Как это работает:**
+
+1. **Администратор прописан в коде:**
+   - Логин: `admin`
+   - Пароль: `admin123`
+   - Невозможно зарегистрировать нового администратора
+
+2. **Обычные пользователи:**
+   - Регистрируются через `register.html`
+   - Получают роль `user`
+   - НЕ видят страницу публикации ВК
+
+3. **Гости:**
+   - При попытке записи на услугу перенаправляются на авторизацию
+   - Видят только публичный контент
+
+4. **Защита страниц:**
+   - `news.html` (публикация ВК) доступна только админу
+   - При попытке доступа без прав показывается экран блокировки
+
+## **Инструкция по внедрению:**
+
+1. **Скопируйте новый `auth.js`** и замените старый
+2. **Добавьте скрипты** в `login.html`, `register.html`, `services.html`
+3. **Добавьте защиту** в `news.html`
+4. **Создайте файл** `admin-check.js` и подключите его в `news.html`
+5. **Проверьте работу системы:**
+
+**Тестовые данные:**
+- Админ: `admin` / `admin123` → доступ к публикации ВК
+- Пользователь: любой зарегистрированный → НЕТ доступа к публикации ВК
+- Гость: при записи на услугу → перенаправление на авторизацию
+
+Система готова! Теперь у вас есть полноценная система ролей с администратором, прописанным в коде.

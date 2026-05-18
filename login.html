@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - АвтоМир</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+        }
+
+        body {
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, var(--primary), #326BF6);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Подвал */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Стили для страницы входа */
+        .auth-hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://sun9-10.userapi.com/s/v1/ig2/IoQykFRiBQSW21WQLPwNr59Q9JULkCfHtWb_KHVUBSxOvBlNzjqEotWC-hU6sLrxSs4IC06dFfWzwnQp1vKEebVh.jpg?quality=95&as=32x22,48x33,72x49,108x74,160x109,240x164,360x245,480x327,540x368,640x436,720x491,1080x736,1100x750&from=bu&cs=1100x0');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .auth-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .auth-hero p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+            padding: 80px 0;
+        }
+
+        .auth-card {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark);
+            font-size: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(50, 107, 246, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--gray);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-hero h1 {
+                font-size: 36px;
+            }
+            
+            .auth-card {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .auth-hero p {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .auth-hero h1 {
+                font-size: 28px;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+        .notification.warning {
+            background: #ffc107;
+        }
+        
+        /* Стили для бейджей ролей */
+        .role-badge {
+            font-size: 10px !important;
+            padding: 2px 8px !important;
+            border-radius: 10px !important;
+            margin-left: 5px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            display: inline-block !important;
+        }
+        .role-badge.admin {
+            background: #dc3545 !important;
+            color: white !important;
+        }
+        .role-badge.user {
+            background: #28a745 !important;
+            color: white !important;
+        }
+        .admin-only {
+            background: rgba(220, 53, 69, 0.1) !important;
+            border-left: 3px solid #dc3545 !important;
+        }
+        .user-menu-item.admin-only {
+            color: #dc3545 !important;
+        }
+        
+        /* Стиль для демо-учетных записей */
+        .demo-accounts {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #dee2e6;
+        }
+        .demo-accounts h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 18px;
+        }
+        .demo-account {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #326BF6;
+        }
+        .demo-account.admin {
+            border-left-color: #dc3545;
+        }
+        .demo-account p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .demo-account code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Официальный дилер</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                            <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
+                        <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                        <li><a href="news_public.html"><i class="fas fa-chevron-right"></i> Публикация</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="auth-section" id="auth-section">
+                        <!-- Будет заполнено через JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Герой секция -->
+    <section class="auth-hero">
+        <div class="container">
+            <h1>Вход в аккаунт</h1>
+            <p>Получите доступ к вашему личному кабинету</p>
+        </div>
+    </section>
+
+    <!-- Форма авторизации -->
+    <section class="auth-container">
+        <div class="container">
+            <div class="auth-card">
+                <h2><i class="fas fa-sign-in-alt"></i> Вход</h2>
+
+                <!-- Форма входа -->
+                <form class="auth-form" id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Логин</label>
+                        <input type="text" id="login-username" placeholder="Введите ваш логин" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <input type="password" id="login-password" placeholder="Введите ваш пароль" required>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox">
+                            Запомнить меня
+                        </label>
+                        <a href="#" class="forgot-password">Забыли пароль?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </button>
+
+                    <div class="auth-footer">
+                        Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+                    </div>
+                </form>
+                
+                <!-- Демо-аккаунты -->
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир</h3>
+                    <p>Ваш надежный партнер в мире автомобилей. Более 15 лет на рынке автомобильных услуг.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Автомобильная, д. 15</a></li>
+                        <li><a href="tel:+74951234567"><i class="fas fa-phone"></i> +7 (495) 123-45-67</a></li>
+                        <li><a href="mailto:info@avtomir.ru"><i class="fas fa-envelope"></i> info@avtomir.ru</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00-21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Автосалон "АвтоМир". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Подключаем общий auth.js -->
+    <script src="auth.js"></script>
+    
+    <script>
+        // Переопределяем обработчик формы входа
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const username = document.getElementById('login-username').value.trim();
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!username || !password) {
+                        showNotification('Пожалуйста, заполните все поля!', 'error');
+                        return;
+                    }
+                    
+                    const result = login(username, password);
+                    
+                    if (result.success) {
+                        const roleText = result.role === 'admin' ? 'Администратор' : 'Пользователь';
+                        showNotification(`Успешный вход как ${roleText}! Перенаправление...`, 'success');
+                        
+                        // Перенаправление в зависимости от роли
+                        setTimeout(() => {
+                            if (result.role === 'admin') {
+                                // Админа перенаправляем на страницу публикации ВК
+                                window.location.href = 'index.html';
+                            } else {
+                                // Обычного пользователя на главную
+                                window.location.href = 'index.html';
+                            }
+                        }, 1500);
+                    } else {
+                        showNotification(result.message || 'Неверный логин или пароль!', 'error');
+                    }
+                });
+            }
+            
+            // Создаем тестового пользователя если его нет
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const demoUserExists = users.some(u => u.username === 'demo');
+            if (!demoUserExists) {
+                users.push({
+                    username: 'demo',
+                    password: '123456',
+                    name: 'Демо Пользователь',
+                    initials: 'ДП'
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            // Проверяем, если пользователь уже авторизован, показываем сообщение
+            loadUserState();
+            if (userState.isLoggedIn) {
+                const roleText = userState.role === 'admin' ? 'Администратор' : 'Пользователь';
+                showNotification(`Вы уже авторизованы как ${userState.userName} (${roleText})`, 'warning');
+            }
+        });
+          document.addEventListener('DOMContentLoaded', function() {
+        // Автоматически инициализируется через auth.js
+        // Дополнительная логика для страницы (если есть)
+    });
+    </script>
+</body>
+</html>

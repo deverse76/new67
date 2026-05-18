@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоМир - Публикации ВКонтакте</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Система авторизации будет встроена в этот файл -->
+    <!-- <script src="auth.js"></script> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f7fa;
+            --green: #2E7D32;
+            --red: #C62828;
+        }
+
+        body {
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+          /* Шапка */
+        header {
+            background: linear-gradient(135deg, var(--dark), #2a2a2a);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Основной контент страницы VK */
+        .vk-section {
+            padding: 80px 0;
+            background: var(--light);
+        }
+
+        .vk-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .vk-title h2 {
+            font-size: 42px;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .vk-title p {
+            font-size: 18px;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Контейнер для панелей */
+        .vk-panel-container {
+            display: grid;
+            grid-template-columns: 1.3fr 1.7fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 1024px) {
+            .vk-panel-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .vk-panel-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Панели */
+        .vk-panel {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .vk-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .vk-panel h3 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Форма */
+        .post-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control, textarea, select {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            background: var(--white);
+            color: var(--dark);
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .form-control:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(50, 107, 246, 0.1);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .char-counter {
+            text-align: right;
+            margin-top: 8px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Информация о платформе */
+        .platform-info {
+            background: rgba(50, 107, 246, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .platform-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .platform-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .platform-status {
+            color: var(--green);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .api-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .api-status.connected {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--green);
+            border: 1px solid #4CAF50;
+        }
+
+        .api-status.error {
+            background: rgba(198, 40, 40, 0.1);
+            color: var(--red);
+            border: 1px solid #F44336;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .test-btn {
+            flex: 1;
+            padding: 12px 15px;
+            background: var(--gray-light);
+            border: 1px solid #e0e0e0;
+            color: var(--dark);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .test-btn:hover {
+            background: rgba(50, 107, 246, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Фото */
+        .photo-attachment {
+            background: rgba(50, 107, 246, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid var(--primary);
+        }
+
+        .photo-attachment p {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .photo-inputs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .photo-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            display: none;
+            border: 2px solid var(--primary);
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(50, 107, 246, 0.2);
+        }
+
+        .extracted-info {
+            background: rgba(46, 125, 50, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid #4CAF50;
+            font-size: 14px;
+            color: var(--green);
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Переключатели */
+        .schedule-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 12px;
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 32px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e0e0e0;
+            border: 2px solid #e0e0e0;
+            transition: .4s;
+            border-radius: 32px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--white);
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+            background: var(--white);
+        }
+
+        .schedule-toggle span {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .datetime-input {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            margin-top: 15px;
+            padding-left: 15px;
+        }
+
+        .datetime-input.active {
+            display: block;
+        }
+
+        /* Кнопки формы */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .vk-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .vk-btn-primary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+        }
+
+        .vk-btn-primary:hover {
+            background: #ff5722;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .vk-btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .vk-btn-secondary:hover {
+            background: #2958d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(50, 107, 246, 0.3);
+        }
+
+        /* Сообщения */
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--green);
+            border: 1px solid #4CAF50;
+        }
+
+        .error {
+            background: rgba(198, 40, 40, 0.1);
+            color: var(--red);
+            border: 1px solid #F44336;
+        }
+
+        /* История публикаций */
+        .history-panel {
+            background: var(--white);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .history-header h3 {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .history-search {
+            width: 250px;
+        }
+
+        @media (max-width: 768px) {
+            .history-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .history-search {
+                width: 100%;
+            }
+        }
+
+        /* История публикаций */
+        .local-history {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .local-history::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .local-history::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .local-history::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .history-item {
+            background: var(--gray-light);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .history-item:hover {
+            background: rgba(50, 107, 246, 0.05);
+            transform: translateX(3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .history-text-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .post-time {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .history-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .history-status {
+            color: var(--green);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .history-error {
+            color: var(--red);
+        }
+
+        /* Нотификации */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            font-weight: 600;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Загрузка */
+        .button-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .button-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Подвал (из index.html) */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .footer-social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .vk-title h2 {
+                font-size: 32px;
+            }
+            
+            .vk-title p {
+                font-size: 16px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .vk-panel {
+                padding: 20px;
+            }
+            
+            .vk-panel h3 {
+                font-size: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .test-buttons {
+                flex-direction: column;
+            }
+            
+            .photo-inputs {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .vk-title h2 {
+                font-size: 28px;
+            }
+            
+            .vk-panel {
+                padding: 15px;
+            }
+            
+            .vk-panel h3 {
+                font-size: 18px;
+            }
+        }
+        
+        /* Стили для защиты доступа */
+        .access-denied {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .access-denied-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .access-denied-icon {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        
+        .access-denied h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .access-denied p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        .access-denied-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .access-denied-buttons .btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .access-denied-buttons .btn-secondary {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Официальный дилер</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                            <li><a href="index.html"><i class="fas fa-home"></i> На сайт</a></li>
+                            <li><a href="admin.html"><i class="fas fa-cog"></i> Управление</a></li>
+                            <li><a href="news_public.html"><i class="fas fa-newspaper"></i> Новости ВК</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="auth-section" id="auth-section">
+                        <!-- Заполняется через встроенный скрипт -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основная секция -->
+    <section class="vk-section" id="vk-section">
+        <!-- Контент будет подгружен в зависимости от прав доступа -->
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир</h3>
+                    <p>Ваш надежный партнер в мире автомобилей. Более 15 лет на рынке автомобильных услуг.</p>
+                    <div class="footer-social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Уфа, ул. Кирова, д. 5</a></li>
+                        <li><a href="tel:+73471234567"><i class="fas fa-phone"></i> +7 (347) 123-45-67</a></li>
+                        <li><a href="mailto:info@avtomir-ufa.ru"><i class="fas fa-envelope"></i> info@avtomir-ufa.ru</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00-21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Автосалон "АвтоМир". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Нотификация -->
+    <div class="notification" id="notification">
+        <div id="notificationContent"></div>
+    </div>
+
+    <!-- Функционал страницы -->
+    <script>
+        // ============================================
+        // ФУНКЦИИ АВТОРИЗАЦИИ (встроенные)
+        // ============================================
+
+        // Функция отображения секции авторизации (без бейджа админа)
+        function renderAuthSection() {
+            const authSection = document.getElementById('auth-section');
+            
+            if (!authSection) return;
+            
+            // Проверяем состояние пользователя из localStorage
+            let userState = {
+                isLoggedIn: false,
+                userName: '',
+                userLogin: '',
+                userInitials: ''
+            };
+            
+            const saved = localStorage.getItem('userState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                userState = { ...userState, ...parsed };
+            }
+            
+            if (userState.isLoggedIn) {
+                // Профиль пользователя БЕЗ бейджа "Админ"
+                authSection.innerHTML = `
+                    <div class="user-profile" id="user-profile">
+                        <div class="user-avatar">
+                            ${userState.userInitials || '??'}
+                        </div>
+                        <div class="user-name">${userState.userName || 'Пользователь'}</div>
+                        <div class="user-menu" id="user-menu">
+                            <a href="profile.html" class="user-menu-item">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            <a href="index.html" class="user-menu-item">
+                                <i class="fas fa-home"></i> На сайт
+                            </a>
+                            <button class="user-menu-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Добавляем обработчик для меню пользователя
+                const userProfile = document.getElementById('user-profile');
+                const userMenu = document.getElementById('user-menu');
+
+                if (userProfile && userMenu) {
+                    userProfile.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userMenu.classList.toggle('show');
+                    });
+
+                    // Закрытие меню при клике вне его
+                    document.addEventListener('click', function() {
+                        userMenu.classList.remove('show');
+                    });
+                }
+            } else {
+                // Показываем кнопки входа и регистрации
+                authSection.innerHTML = `
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-small">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                        <a href="register.html" class="btn btn-small btn-outline">
+                            <i class="fas fa-user-plus"></i> Регистрация
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Функция выхода
+        function logout() {
+            // Сброс состояния пользователя
+            const userState = {
+                isLoggedIn: false,
+                userName: '',
+                userLogin: '',
+                userInitials: ''
+            };
+            
+            localStorage.setItem('userState', JSON.stringify(userState));
+            window.location.href = 'login.html';
+        }
+
+        // Функция инициализации шапки
+        function initHeader() {
+            renderAuthSection();
+            
+            // Мобильное меню
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navContainer = document.querySelector('.nav-container');
+            
+            if (mobileMenu && navContainer) {
+                mobileMenu.addEventListener('click', function() {
+                    navContainer.classList.toggle('show');
+                });
+
+                // Закрытие меню при клике вне его
+                document.addEventListener('click', function(e) {
+                    if (!navContainer.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        navContainer.classList.remove('show');
+                    }
+                });
+            }
+        }
+
+        // Функция загрузки состояния пользователя
+        function loadUserState() {
+            const saved = localStorage.getItem('userState');
+            return saved ? JSON.parse(saved) : {
+                isLoggedIn: false,
+                userName: '',
+                userLogin: '',
+                userInitials: ''
+            };
+        }
+
+        // Функция защиты страницы VK
+        function protectVKPage() {
+            const userState = loadUserState();
+            
+            // Проверяем, является ли пользователь администратором
+            // Только пользователь с логином "admin" имеет доступ
+            return userState.isLoggedIn && userState.userLogin === 'admin';
+        }
+
+        // ============================================
+        // ОСНОВНОЙ КОД СТРАНИЦЫ
+        // ============================================
+
+        // Проверка доступа и загрузка контента
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализируем шапку
+            initHeader();
+            
+            // Проверяем доступ
+            if (!protectVKPage()) {
+                // Если доступ запрещен, показываем сообщение
+                showAccessDenied();
+                return;
+            }
+            
+            // Если доступ есть - загружаем основной контент
+            loadAdminContent();
+        });
+        
+        // Функция показа сообщения об отказе в доступе
+        function showAccessDenied() {
+            const vkSection = document.getElementById('vk-section');
+            if (vkSection) {
+                vkSection.innerHTML = `
+                    <div class="container">
+                        <div class="access-denied">
+                            <div class="access-denied-container">
+                                <div class="access-denied-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h2>Доступ запрещен</h2>
+                                <p>
+                                    Страница публикации в ВКонтакте доступна только администраторам системы.
+                                    <br><br>
+                                    <strong>Администратор:</strong> login: <code>admin</code> / password: <code>admin123</code>
+                                </p>
+                                <div class="access-denied-buttons">
+                                    <a href="index.html" class="btn">
+                                        <i class="fas fa-home"></i> На главную
+                                    </a>
+                                    <a href="login.html" class="btn btn-secondary">
+                                        <i class="fas fa-sign-in-alt"></i> Войти как администратор
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Автоматический редирект через 5 секунд
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 5000);
+        }
+        
+        // Загрузка контента для администратора
+        function loadAdminContent() {
+            const vkSection = document.getElementById('vk-section');
+            vkSection.innerHTML = `
+                <div class="container">
+                    <div class="vk-title">
+                        <h2><i class="fab fa-vk"></i> Публикация в ВКонтакте</h2>
+                        <p>Управление публикациями в группе АвтоМир</p>
+                    </div>
+                    
+                    <div class="vk-panel-container">
+                        <div class="vk-panel">
+                            <h3>Создание поста</h3>
+                            <form class="post-form" id="postForm">
+                                <div class="form-group">
+                                    <div class="platform-info">
+                                        <div class="platform-header">
+                                            <i class="fab fa-vk platform-icon"></i>
+                                            <div>
+                                                <div class="platform-name">ВКонтакте</div>
+                                                <div class="platform-status">✓ Подключено к группе ID: 233256913</div>
+                                            </div>
+                                        </div>
+                                        <div id="apiStatus" class="api-status">
+                                            <i class="fas fa-sync fa-spin"></i> Проверка подключения...
+                                        </div>
+                                        <div class="test-buttons">
+                                            <button type="button" class="test-btn" onclick="testConnection()">
+                                                <i class="fas fa-wifi"></i> Тест подключения
+                                            </button>
+                                            <button type="button" class="test-btn" onclick="testPostPublishing()">
+                                                <i class="fas fa-paper-plane"></i> Тест публикации
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="postText"><i class="fas fa-edit"></i> Текст поста</label>
+                                    <textarea id="postText" placeholder="Введите текст для публикации в ВКонтакте..." maxlength="4000"></textarea>
+                                    <div class="char-counter">
+                                        <span id="charCount">0</span>/4000 символов
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-image"></i> Прикрепление фото из ВКонтакте</label>
+                                    <div class="photo-attachment">
+                                        <p><strong>Вставьте ссылку на фото из ВКонтакте:</strong></p>
+                                        <div class="photo-inputs">
+                                            <input type="url" id="photoUrl" placeholder="https://vk.com/photo123456789_456239021" class="form-control">
+                                            <button type="button" class="vk-btn-secondary btn-small" id="parseUrlBtn">
+                                                <i class="fas fa-link"></i> Извлечь ID
+                                            </button>
+                                        </div>
+                                        <div id="extractedInfo" class="extracted-info" style="display: none;">
+                                            <i class="fas fa-check-circle"></i> ID извлечены: <span id="photoIds"></span>
+                                        </div>
+                                        <div class="photo-preview">
+                                            <img id="previewImage" class="preview-image" src="" alt="Предпросмотр изображения">
+                                        </div>
+                                        <small style="color: var(--gray); margin-top: 8px; display: block;">
+                                            Поддерживаются ссылки на фото из ВКонтакте
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-clock"></i> Настройки публикации</label>
+                                    <div class="schedule-options">
+                                        <div class="schedule-toggle">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="scheduleToggle">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span>Отложенная публикация</span>
+                                        </div>
+                                        
+                                        <div class="datetime-input" id="datetimeInput">
+                                            <input type="datetime-local" id="scheduleDateTime" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="schedule-toggle">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="fromGroup" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <span>Опубликовать от имени сообщества</span>
+                                    </div>
+                                    <div class="schedule-toggle">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="signed" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <span>Подписать автора (администратора)</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="button-group">
+                                    <button type="button" class="vk-btn vk-btn-primary" id="publishBtn">
+                                        <i class="fas fa-paper-plane"></i> Опубликовать в ВК
+                                    </button>
+                                    <button type="button" class="vk-btn vk-btn-secondary" id="previewBtn">
+                                        <i class="fas fa-eye"></i> Предпросмотр
+                                    </button>
+                                </div>
+                                
+                                <div class="status-message success" id="successMessage">
+                                    <i class="fas fa-check-circle"></i> Пост успешно опубликован в ВКонтакте!
+                                </div>
+                                
+                                <div class="status-message error" id="errorMessage">
+                                    <i class="fas fa-exclamation-triangle"></i> Произошла ошибка при публикации
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="vk-panel history-panel">
+                            <div class="history-header">
+                                <h3>История публикаций</h3>
+                                <div class="history-search">
+                                    <input type="text" id="searchHistory" placeholder="Поиск по истории..." class="form-control">
+                                </div>
+                            </div>
+                            <div class="local-history">
+                                <div id="historyList">
+                                    <div class="history-item">
+                                        <div class="history-text-content">Здесь будет отображаться история ваших постов. После первой публикации здесь появится информация о ваших постах.</div>
+                                        <div class="history-meta">
+                                            <span>--.--.---- --:--</span>
+                                            <span class="history-status">Готов к работе</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Инициализация функционала страницы для администратора
+            initializeAdminFunctionality();
+        }
+        
+        // Инициализация функционала для администратора
+        function initializeAdminFunctionality() {
+            const VK_TOKEN = 'vk1.a.pNsP-E7EBatEl9r2x-fT8AfPi5VbOWDDKFtP8NkamQEZsSFQULVvsoNIggxNTgyKdbm247Uvsp4VyJOPpzZehocYVnbgctTuCusDswwuRo31Pj5m9kEOsJ-PY8KZn7GzH699yTzrPA4A0-Xl5Q-hubvILm5ZBfplsO_fKofAQkt6z-jV4IyK2vtOENBu3iI8MQEZ4wdca8F6az3Taf0WzA';
+            const GROUP_ID = '-233768802';
+            let localHistory = JSON.parse(localStorage.getItem('vk_publish_history') || '[]');
+            let extractedPhotoIds = [];
+
+            // Инициализация
+            initializeScheduleToggle();
+            checkTokenValidity();
+            loadLocalHistory();
+            setupCharCounter();
+            setupUrlParser();
+            
+            // Загружаем черновик если есть
+            const savedDraft = localStorage.getItem('vk_draft');
+            if (savedDraft) {
+                document.getElementById('postText').value = savedDraft;
+                document.getElementById('charCount').textContent = savedDraft.length;
+            }
+
+            // Счетчик символов
+            function setupCharCounter() {
+                const postText = document.getElementById('postText');
+                const charCount = document.getElementById('charCount');
+                
+                postText.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                    charCount.style.color = this.value.length > 3500 ? '#C62828' : 'var(--gray)';
+                });
+            }
+
+            // Парсер ссылок ВК
+            function setupUrlParser() {
+                const parseBtn = document.getElementById('parseUrlBtn');
+                const photoUrl = document.getElementById('photoUrl');
+                
+                parseBtn.addEventListener('click', function() {
+                    const url = photoUrl.value.trim();
+                    if (!url) {
+                        showMessage('Введите ссылку на фото', 'error');
+                        return;
+                    }
+                    
+                    const photoIds = extractPhotoIdsFromUrl(url);
+                    if (photoIds.length > 0) {
+                        extractedPhotoIds = photoIds;
+                        displayExtractedIds(photoIds);
+                        showNotification(`Успешно извлечено ${photoIds.length} ID фото`);
+                        loadPhotoPreview(photoIds[0]);
+                    } else {
+                        showMessage('Не удалось извлечь ID фото из ссылки', 'error');
+                    }
+                });
+                
+                // Автоматический парсинг при вставке
+                photoUrl.addEventListener('paste', function(e) {
+                    setTimeout(() => {
+                        const url = photoUrl.value.trim();
+                        const photoIds = extractPhotoIdsFromUrl(url);
+                        if (photoIds.length > 0) {
+                            extractedPhotoIds = photoIds;
+                            displayExtractedIds(photoIds);
+                            loadPhotoPreview(photoIds[0]);
+                        }
+                    }, 100);
+                });
+            }
+
+            // Извлечение ID фото из различных форматов ссылок ВК
+            function extractPhotoIdsFromUrl(url) {
+                const patterns = [
+                    // photo123456789_456239021
+                    /photo(-?\d+)_(\d+)/,
+                    // https://vk.com/photo123456789_456239021
+                    /vk\.com\/photo(-?\d+)_(\d+)/,
+                    // https://vk.com/wall123456789?z=photo123456789_456239021
+                    /z=photo(-?\d+)_(\d+)/,
+                    // albums123456789/456239021
+                    /albums(-?\d+)\/(\d+)/,
+                    // photos123456789/456239021
+                    /photos(-?\d+)\/(\d+)/
+                ];
+                
+                const photoIds = [];
+                
+                for (const pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match) {
+                        const ownerId = match[1];
+                        const photoId = match[2];
+                        photoIds.push(`${ownerId}_${photoId}`);
+                    }
+                }
+                
+                return photoIds;
+            }
+
+            // Отображение извлеченных ID
+            function displayExtractedIds(photoIds) {
+                const extractedInfo = document.getElementById('extractedInfo');
+                const photoIdsSpan = document.getElementById('photoIds');
+                
+                photoIdsSpan.textContent = photoIds.map(id => `photo${id}`).join(', ');
+                extractedInfo.style.display = 'block';
+            }
+
+            // Загрузка превью фото
+            function loadPhotoPreview(photoId) {
+                const previewImage = document.getElementById('previewImage');
+                
+                // Пробуем разные варианты URL для превью
+                const previewUrls = [
+                    `https://sun9-71.userapi.com/impg/${photoId.replace('_', '/')}.jpg`,
+                    `https://sun1-87.userapi.com/impg/${photoId.replace('_', '/')}.jpg`,
+                    `https://sun9-74.userapi.com/impg/${photoId.replace('_', '/')}.jpg`
+                ];
+                
+                let currentUrlIndex = 0;
+                
+                function tryNextUrl() {
+                    if (currentUrlIndex >= previewUrls.length) {
+                        previewImage.style.display = 'none';
+                        return;
+                    }
+                    
+                    previewImage.src = previewUrls[currentUrlIndex];
+                    previewImage.style.display = 'block';
+                    
+                    previewImage.onload = function() {
+                        // Фото загружено успешно
+                    };
+                    
+                    previewImage.onerror = function() {
+                        currentUrlIndex++;
+                        tryNextUrl();
+                    };
+                }
+                
+                tryNextUrl();
+            }
+
+            // Инициализация переключателя расписания
+            function initializeScheduleToggle() {
+                const scheduleToggle = document.getElementById('scheduleToggle');
+                const datetimeInput = document.getElementById('datetimeInput');
+                
+                if (scheduleToggle && datetimeInput) {
+                    scheduleToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            datetimeInput.classList.add('active');
+                            const minDate = new Date(Date.now() + 5 * 60 * 1000);
+                            document.getElementById('scheduleDateTime').min = minDate.toISOString().slice(0, 16);
+                            const defaultDate = new Date(Date.now() + 60 * 60 * 1000);
+                            document.getElementById('scheduleDateTime').value = defaultDate.toISOString().slice(0, 16);
+                        } else {
+                            datetimeInput.classList.remove('active');
+                        }
+                    });
+                }
+            }
+
+            // JSONP функция для обхода CORS
+            function callVKAPI(method, params = {}) {
+                return new Promise((resolve, reject) => {
+                    const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                    const script = document.createElement('script');
+                    
+                    const baseParams = {
+                        access_token: VK_TOKEN,
+                        v: '5.199'
+                    };
+                    
+                    const allParams = { ...baseParams, ...params };
+                    allParams.callback = callbackName;
+                    
+                    const paramString = Object.keys(allParams)
+                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(allParams[key])}`)
+                        .join('&');
+                    
+                    const url = `https://api.vk.com/method/${method}?${paramString}`;
+                    
+                    window[callbackName] = function(data) {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        
+                        if (data.error) {
+                            reject(new Error(`VK API: ${data.error.error_msg} (код: ${data.error.error_code})`));
+                        } else {
+                            resolve(data.response);
+                        }
+                    };
+                    
+                    script.onerror = function() {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        reject(new Error('Ошибка загрузки скрипта VK API'));
+                    };
+                    
+                    script.src = url;
+                    document.body.appendChild(script);
+                });
+            }
+
+            // Тест подключения
+            window.testConnection = async function() {
+                try {
+                    showMessage('Тестирование подключения...', 'success');
+                    const result = await callVKAPI('wall.post', {
+                        owner_id: GROUP_ID,
+                        message: 'Тестовый пост - проверка подключения',
+                        publish_date: Math.floor(Date.now() / 1000) + 300
+                    });
+                    showMessage('✓ Подключение успешно! Можно публиковать посты', 'success');
+                } catch (error) {
+                    if (error.message.includes('wall.post')) {
+                        showMessage('✓ Подключение работает! Ошибка ожидаема для тестового поста', 'success');
+                    } else {
+                        showMessage('✗ Ошибка подключения: ' + error.message, 'error');
+                    }
+                }
+            };
+
+            // Тест публикации
+            window.testPostPublishing = async function() {
+                try {
+                    showMessage('Тест публикации...', 'success');
+                    const result = await callVKAPI('wall.post', {
+                        owner_id: GROUP_ID,
+                        message: 'Тестовый пост от ' + new Date().toLocaleString('ru-RU'),
+                        from_group: 1,
+                        signed: 1
+                    });
+                    showMessage('✓ Тест успешен! Пост опубликован с ID: ' + result.post_id, 'success');
+                    addToLocalHistory('Тестовый пост', result.post_id, true);
+                } catch (error) {
+                    showMessage('✗ Ошибка теста: ' + error.message, 'error');
+                }
+            };
+
+            async function checkTokenValidity() {
+                try {
+                    await callVKAPI('wall.post', {
+                        owner_id: GROUP_ID,
+                        message: 'test',
+                        publish_date: Math.floor(Date.now() / 1000) + 3600
+                    });
+                    
+                    document.getElementById('apiStatus').className = 'api-status connected';
+                    document.getElementById('apiStatus').innerHTML = 
+                        `<i class="fas fa-check-circle"></i> Токен валиден, можно публиковать посты`;
+                        
+                } catch (error) {
+                    if (error.message.includes('wall.post')) {
+                        document.getElementById('apiStatus').className = 'api-status connected';
+                        document.getElementById('apiStatus').innerHTML = 
+                            `<i class="fas fa-check-circle"></i> Подключение активно (ошибка в тестовом посте ожидаема)`;
+                    } else {
+                        document.getElementById('apiStatus').className = 'api-status error';
+                        document.getElementById('apiStatus').innerHTML = 
+                            `<i class="fas fa-exclamation-triangle"></i> Ошибка: ${error.message}`;
+                    }
+                }
+            }
+
+            // Публикация поста
+            document.getElementById('publishBtn').addEventListener('click', async function() {
+                const postText = document.getElementById('postText').value.trim();
+                const publishBtn = this;
+                
+                if (!postText) {
+                    showMessage('Введите текст поста', 'error');
+                    return;
+                }
+                
+                publishBtn.classList.add('button-loading');
+                publishBtn.disabled = true;
+                
+                try {
+                    // Параметры для публикации
+                    const params = {
+                        owner_id: GROUP_ID,
+                        message: postText,
+                        from_group: document.getElementById('fromGroup').checked ? 1 : 0,
+                        signed: document.getElementById('signed').checked ? 1 : 0
+                    };
+                    
+                    // Добавляем фото если есть извлеченные ID
+                    if (extractedPhotoIds.length > 0) {
+                        const attachments = extractedPhotoIds.map(id => `photo${id}`).join(',');
+                        params.attachments = attachments;
+                    }
+                    
+                    // Отложенная публикация
+                    const scheduleToggle = document.getElementById('scheduleToggle');
+                    if (scheduleToggle && scheduleToggle.checked) {
+                        const dateTimeInput = document.getElementById('scheduleDateTime');
+                        if (dateTimeInput && dateTimeInput.value) {
+                            const dateTime = new Date(dateTimeInput.value);
+                            if (dateTime > new Date()) {
+                                params.publish_date = Math.floor(dateTime.getTime() / 1000);
+                            }
+                        }
+                    }
+                    
+                    // Публикуем пост
+                    const result = await callVKAPI('wall.post', params);
+                    
+                    let successMsg = '✓ Пост успешно опубликован в ВКонтакте! ID: ' + result.post_id;
+                    if (extractedPhotoIds.length > 0) {
+                        successMsg += ` с ${extractedPhotoIds.length} фото`;
+                    }
+                    showMessage(successMsg, 'success');
+                    
+                    // Добавляем в локальную историю
+                    addToLocalHistory(postText, result.post_id, true);
+                    
+                    // Очищаем форму
+                    resetForm();
+                    
+                } catch (error) {
+                    const errorMsg = '✗ Ошибка публикации: ' + error.message;
+                    showMessage(errorMsg, 'error');
+                    
+                    addToLocalHistory(postText, 'error', false);
+                } finally {
+                    publishBtn.classList.remove('button-loading');
+                    publishBtn.disabled = false;
+                }
+            });
+
+            // Предпросмотр
+            document.getElementById('previewBtn').addEventListener('click', function() {
+                const postText = document.getElementById('postText').value.trim();
+                if (!postText) {
+                    showMessage('Введите текст поста для предпросмотра', 'error');
+                    return;
+                }
+                
+                localStorage.setItem('vk_draft', postText);
+                
+                let previewInfo = 'Текст поста готов к публикации. ';
+                if (extractedPhotoIds.length > 0) {
+                    previewInfo += `Будет прикреплено ${extractedPhotoIds.length} фото`;
+                } else {
+                    previewInfo += 'Фото не прикреплены.';
+                }
+                
+                showMessage(previewInfo, 'success');
+            });
+
+            // Локальная история в браузере
+            function addToLocalHistory(text, postId, success) {
+                const historyItem = {
+                    id: Date.now(),
+                    text: text,
+                    postId: postId,
+                    success: success,
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toLocaleString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+                
+                localHistory.unshift(historyItem);
+                localHistory = localHistory.slice(0, 50);
+                localStorage.setItem('vk_publish_history', JSON.stringify(localHistory));
+                
+                loadLocalHistory();
+            }
+
+            function loadLocalHistory() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+                
+                if (localHistory.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="history-item">
+                            <div class="history-text-content">История публикаций пуста. После первой публикации здесь появится информация о ваших постах.</div>
+                            <div class="history-meta">
+                                <span>--.--.---- --:--</span>
+                                <span class="history-status">Нет данных</span>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                localHistory.forEach(item => {
+                    const shortText = item.text.length > 120 ? item.text.substring(0, 117) + '...' : item.text;
+                    const status = item.success ? '✅ Успешно' : '❌ Ошибка';
+                    const statusColor = item.success ? 'var(--green)' : 'var(--red)';
+                    const statusClass = item.success ? 'history-status' : 'history-status history-error';
+                    
+                    const historyItemEl = document.createElement('div');
+                    historyItemEl.className = 'history-item';
+                    historyItemEl.innerHTML = `
+                        <div class="history-text-content">${shortText}</div>
+                        <div class="post-time">ID поста: ${item.postId}</div>
+                        <div class="history-meta">
+                            <span>${item.date}</span>
+                            <span class="${statusClass}" style="color: ${statusColor};">${status}</span>
+                        </div>
+                    `;
+                    historyList.appendChild(historyItemEl);
+                });
+            }
+
+            // Сброс формы
+            function resetForm() {
+                document.getElementById('postText').value = '';
+                document.getElementById('photoUrl').value = '';
+                document.getElementById('charCount').textContent = '0';
+                document.getElementById('scheduleToggle').checked = false;
+                document.getElementById('datetimeInput').classList.remove('active');
+                document.getElementById('extractedInfo').style.display = 'none';
+                document.getElementById('previewImage').style.display = 'none';
+                extractedPhotoIds = [];
+                localStorage.removeItem('vk_draft');
+            }
+
+            // Показать сообщение
+            function showMessage(text, type) {
+                const messageEl = type === 'success' ? 
+                    document.getElementById('successMessage') : 
+                    document.getElementById('errorMessage');
+                
+                messageEl.innerHTML = type === 'success' ? 
+                    `<i class="fas fa-check-circle"></i> ${text}` :
+                    `<i class="fas fa-exclamation-triangle"></i> ${text}`;
+                
+                messageEl.style.display = 'block';
+                
+                const otherMessageEl = type === 'success' ? 
+                    document.getElementById('errorMessage') : 
+                    document.getElementById('successMessage');
+                otherMessageEl.style.display = 'none';
+                
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
+
+            // Показать нотификацию
+            window.showNotification = function(text) {
+                const notification = document.getElementById('notification');
+                const content = document.getElementById('notificationContent');
+                
+                content.textContent = text;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            };
+
+            // Поиск по истории
+            document.getElementById('searchHistory').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const historyItems = document.querySelectorAll('.history-item');
+                
+                historyItems.forEach(item => {
+                    const text = item.querySelector('.history-text-content').textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

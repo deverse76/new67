@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - АвтоМир</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Существующие стили остаются без изменений */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        body {
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, var(--primary), #326BF6);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Основной контент профиля */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary), #326BF6);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .profile-hero h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .profile-hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .profile-container {
+            padding: 50px 0;
+            background: var(--gray-light);
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        .profile-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .profile-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            display: inline-block;
+            padding: 5px 15px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .personal-data {
+            margin-top: 30px;
+        }
+
+        .personal-data h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-item {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-label {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .profile-main {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .welcome-message {
+            margin-bottom: 40px;
+        }
+
+        .welcome-message h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .welcome-message p {
+            font-size: 18px;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        /* Форма редактирования профиля */
+        .profile-form {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .profile-form h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(50, 107, 246, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        /* Стили для заявок */
+        .applications-section {
+            margin-top: 40px;
+        }
+
+        .applications-section h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .applications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .application-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .application-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .application-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .application-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .application-type {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--primary);
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .application-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .application-details {
+            margin-bottom: 15px;
+        }
+
+        .application-detail {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: var(--gray);
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .application-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-processing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+
+        .empty-state h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Модальное окно подтверждения отмены */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 30px 30px 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            z-index: 1;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Подвал */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                order: 2;
+            }
+            
+            .profile-main {
+                order: 1;
+            }
+
+            .application-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .application-date {
+                margin-top: 10px;
+            }
+
+            .application-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .user-name {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .profile-hero h1 {
+                font-size: 28px;
+            }
+            
+            .welcome-message h2 {
+                font-size: 24px;
+            }
+            
+            .welcome-message p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Официальный дилер</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
+                        <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="user-profile" id="user-profile">
+                        <div class="user-avatar" id="user-avatar">ОМ</div>
+                        <div class="user-name" id="user-name">Орлов Максим</div>
+                        <div class="user-menu" id="user-menu">
+                            <a href="profile.html" class="user-menu-item">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            <button class="user-menu-item" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Герой секция профиля -->
+    <section class="profile-hero">
+        <div class="container">
+            <h1>Личный кабинет</h1>
+            <p>Управление вашим профилем и заявками</p>
+        </div>
+    </section>
+
+    <!-- Основной контент профиля -->
+    <section class="profile-container">
+        <div class="container">
+            <div class="profile-content">
+                <!-- Боковая панель -->
+                <div class="profile-sidebar">
+                    <div class="profile-info">
+                        <div class="profile-avatar" id="profile-avatar">ОМ</div>
+                        <div class="profile-name" id="profile-name">Орлов Максим</div>
+                        <div class="profile-role" id="profile-role">Клиент</div>
+                    </div>
+
+                    <div class="personal-data">
+                        <h3><i class="fas fa-user-circle"></i> Личные данные</h3>
+                        <div class="data-item">
+                            <span class="data-label">Логин:</span>
+                            <span class="data-value" id="user-login">orlov</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Имя:</span>
+                            <span class="data-value" id="user-first-name">Максим</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Фамилия:</span>
+                            <span class="data-value" id="user-last-name">Орлов</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Отчество:</span>
+                            <span class="data-value" id="user-patronymic">Сергеевич</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Телефон:</span>
+                            <span class="data-value" id="user-phone">+7 (999) 123-45-67</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Основная информация -->
+                <div class="profile-main">
+                    <div class="welcome-message">
+                        <h2>Добро пожаловать в личный кабинет!</h2>
+                        <p>Здесь вы можете управлять своими данными и просматривать историю заявок.</p>
+                    </div>
+
+                    <!-- Форма редактирования профиля -->
+                    <div class="profile-form">
+                        <h3><i class="fas fa-edit"></i> Редактировать профиль</h3>
+                        <form id="profile-form">
+                            <div class="form-group">
+                                <label for="firstName">Имя *</label>
+                                <input type="text" id="firstName" placeholder="Введите имя" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Фамилия *</label>
+                                <input type="text" id="lastName" placeholder="Введите фамилию" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patronymic">Отчество</label>
+                                <input type="text" id="patronymic" placeholder="Введите отчество">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Телефон *</label>
+                                <input type="tel" id="phone" placeholder="+7 (999) 999-99-99" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Сохранить изменения
+                                </button>
+                                <button type="button" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);" id="cancel-btn">
+                                    <i class="fas fa-times"></i> Отмена
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Раздел с заявками -->
+                    <div class="applications-section">
+                        <h3><i class="fas fa-clipboard-list"></i> Мои заявки</h3>
+                        
+                        <div class="applications-list" id="applications-list">
+                            <!-- Заявки будут загружены через JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир</h3>
+                    <p>Ваш надежный партнер в мире автомобилей. Более 15 лет на рынке автомобильных услуг.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                            <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                            <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                            <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
+                            <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>г. Москва, ул. Автомобильная, д. 15</li>
+                        <li>+7 (495) 123-45-67</li>
+                        <li>info@avtomir.ru</li>
+                        <li>Пн-Пт: 9:00-21:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Автосалон "АвтоМир". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const userState = JSON.parse(localStorage.getItem('userState'));
+            
+            if (!userState || !userState.isLoggedIn) {
+                // Если пользователь не авторизован, перенаправляем на страницу входа
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Загружаем данные пользователя
+            loadUserData(userState);
+            
+            // Загружаем и отображаем заявки
+            loadApplications(userState.userLogin);
+
+            // Мобильное меню
+            document.querySelector('.mobile-menu').addEventListener('click', function() {
+                document.querySelector('.nav-container').classList.toggle('show');
+            });
+
+            // Меню пользователя
+            const userProfile = document.getElementById('user-profile');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userProfile && userMenu) {
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('show');
+                });
+
+                // Закрытие меню при клике вне его
+                document.addEventListener('click', function() {
+                    userMenu.classList.remove('show');
+                });
+            }
+
+            // Выход из системы
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    localStorage.removeItem('userState');
+                    localStorage.removeItem('currentUser');
+                    showNotification('Вы вышли из системы', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                });
+            }
+
+            // Закрытие мобильного меню при клике вне его
+            document.addEventListener('click', function(e) {
+                const navContainer = document.querySelector('.nav-container');
+                const mobileMenu = document.querySelector('.mobile-menu');
+                
+                if (navContainer && mobileMenu) {
+                    if (!navContainer.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        navContainer.classList.remove('show');
+                    }
+                }
+            });
+
+            // Маска для телефона в форме
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                    e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+                });
+            }
+
+            // Обработка формы редактирования профиля
+            const profileForm = document.getElementById('profile-form');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveProfileChanges();
+                });
+            }
+
+            // Кнопка отмены
+            const cancelBtn = document.getElementById('cancel-btn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    loadUserData(userState); // Перезагружаем данные
+                });
+            }
+        });
+
+        // Загрузка данных пользователя
+        function loadUserData(userState) {
+            // Получаем всех пользователей
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userData = users.find(user => user.username === userState.userLogin);
+            
+            if (userData) {
+                // Обновляем данные в боковой панели
+                updateSidebar(userData);
+                
+                // Заполняем форму редактирования
+                fillEditForm(userData);
+                
+                // Обновляем шапку с форматом "Фамилия Имя"
+                updateHeader(userData);
+            }
+        }
+
+        // Обновление боковой панели
+        function updateSidebar(userData) {
+            const firstName = userData.firstName || '';
+            const lastName = userData.lastName || '';
+            const patronymic = userData.patronymic || '';
+            const phone = userData.phone || '+7 (999) 123-45-67';
+            const username = userData.username || '';
+            
+            // Формируем полное имя (с отчеством)
+            const fullNameWithPatronymic = `${lastName} ${firstName} ${patronymic}`.trim() || 'Орлов Максим';
+            
+            // Формируем имя для отображения (без отчества)
+            const displayName = `${lastName} ${firstName}`.trim() || 'Орлов Максим';
+            
+            // Получаем инициалы для аватара
+            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'ОМ';
+            
+            // Определяем роль
+            const role = userData.role === 'admin' ? 'Администратор' : 'Клиент';
+            
+            // Обновляем данные в боковой панели
+            document.getElementById('profile-avatar').textContent = initials;
+            document.getElementById('profile-name').textContent = fullNameWithPatronymic;
+            document.getElementById('profile-role').textContent = role;
+            
+            document.getElementById('user-login').textContent = username;
+            document.getElementById('user-first-name').textContent = firstName;
+            document.getElementById('user-last-name').textContent = lastName;
+            document.getElementById('user-patronymic').textContent = patronymic;
+            document.getElementById('user-phone').textContent = phone;
+            
+            // Обновляем шапку
+            updateHeader(userData);
+        }
+
+        // Заполнение формы редактирования
+        function fillEditForm(userData) {
+            document.getElementById('firstName').value = userData.firstName || '';
+            document.getElementById('lastName').value = userData.lastName || '';
+            document.getElementById('patronymic').value = userData.patronymic || '';
+            document.getElementById('phone').value = userData.phone || '';
+        }
+
+        // Обновление шапки с форматом "Фамилия Имя"
+        function updateHeader(userData) {
+            const firstName = userData.firstName || 'Максим';
+            const lastName = userData.lastName || 'Орлов';
+            
+            // Формат: Фамилия Имя (например: Орлов Максим)
+            const displayName = `${lastName} ${firstName}`.trim();
+            
+            // Получаем инициалы для аватара
+            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+            
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            
+            if (userAvatar) userAvatar.textContent = initials;
+            if (userName) userName.textContent = displayName;
+        }
+
+        // Сохранение изменений профиля (СИНХРОНИЗАЦИЯ С АДМИН-ПАНЕЛЬЮ)
+        function saveProfileChanges() {
+            const userState = JSON.parse(localStorage.getItem('userState'));
+            if (!userState) return;
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const patronymic = document.getElementById('patronymic').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Валидация
+            if (!firstName || !lastName || !phone) {
+                showNotification('Пожалуйста, заполните все обязательные поля', 'error');
+                return;
+            }
+            
+            // Получаем всех пользователей
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(user => user.username === userState.userLogin);
+            
+            if (userIndex !== -1) {
+                // Обновляем данные пользователя
+                users[userIndex].firstName = firstName;
+                users[userIndex].lastName = lastName;
+                users[userIndex].patronymic = patronymic;
+                users[userIndex].phone = phone;
+                users[userIndex].name = `${lastName} ${firstName} ${patronymic}`.trim();
+                users[userIndex].initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+                users[userIndex].updatedAt = new Date().toISOString();
+                
+                // Сохраняем обновленные данные (СИНХРОНИЗАЦИЯ)
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Обновляем currentUser для совместимости
+                localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+                
+                // Обновляем userState
+                userState.firstName = firstName;
+                userState.lastName = lastName;
+                userState.phone = phone;
+                userState.userName = `${lastName} ${firstName}`;
+                localStorage.setItem('userState', JSON.stringify(userState));
+                
+                // Обновляем интерфейс
+                updateSidebar(users[userIndex]);
+                updateHeader(users[userIndex]);
+                
+                showNotification('Данные профиля успешно обновлены!', 'success');
+                
+                // Синхронизация: Обновляем все заявки пользователя с новыми данными
+                syncUserApplications(userState.userLogin, firstName, lastName, phone);
+                
+                // Синхронизация: Обновляем отображение в админ-панели
+                syncAdminPanel(userState.userLogin, users[userIndex]);
+            }
+        }
+
+        // СИНХРОНИЗАЦИЯ: Обновление заявок пользователя
+        function syncUserApplications(username, firstName, lastName, phone) {
+            // Обновляем заявки на автомобили
+            let carApplications = JSON.parse(localStorage.getItem('carApplications') || '[]');
+            carApplications = carApplications.map(app => {
+                if (app.userLogin === username) {
+                    return {
+                        ...app,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        name: `${lastName} ${firstName}`,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+                return app;
+            });
+            localStorage.setItem('carApplications', JSON.stringify(carApplications));
+            
+            // Обновляем заявки на услуги
+            let serviceApplications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            serviceApplications = serviceApplications.map(app => {
+                if (app.userLogin === username) {
+                    return {
+                        ...app,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        name: `${lastName} ${firstName}`,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+                return app;
+            });
+            localStorage.setItem('serviceApplications', JSON.stringify(serviceApplications));
+            
+            // Перезагружаем заявки
+            loadApplications(username);
+        }
+
+        // СИНХРОНИЗАЦИЯ: Обновление данных в админ-панели
+        function syncAdminPanel(username, userData) {
+            // Создаем событие для синхронизации с админ-панелью
+            const syncEvent = new CustomEvent('userDataUpdated', {
+                detail: {
+                    username: username,
+                    userData: userData,
+                    timestamp: new Date().toISOString()
+                }
+            });
+            window.dispatchEvent(syncEvent);
+        }
+
+        // Загрузка заявок пользователя
+        function loadApplications(username) {
+            // Получаем заявки на автомобили из localStorage
+            const carApplications = JSON.parse(localStorage.getItem('carApplications') || '[]');
+            // Получаем заявки на услуги из localStorage
+            const serviceApplications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            
+            // Фильтруем заявки по текущему пользователю
+            const userCarApplications = carApplications.filter(app => app.userLogin === username);
+            const userServiceApplications = serviceApplications.filter(app => app.userLogin === username);
+            
+            // Объединяем все заявки
+            const allApplications = [...userCarApplications, ...userServiceApplications];
+            
+            // Сортируем заявки по дате создания (новые сверху)
+            allApplications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            // Отображаем заявки
+            renderApplications(allApplications, 'applications-list');
+        }
+
+        // Отображение заявок
+        function renderApplications(applications, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (!container) return;
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard"></i>
+                        <h4>У вас нет заявок</h4>
+                        <p>У вас нет никаких записей</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            applications.forEach(app => {
+                const isCarApplication = app.car !== undefined;
+                const applicationType = isCarApplication ? 'car' : 'service';
+                
+                const applicationCard = document.createElement('div');
+                applicationCard.className = 'application-card';
+                
+                const formattedDate = new Date(app.createdAt).toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                // Форматируем дату и время записи для отображения
+                let dateTimeInfo = '';
+                
+                // Для заявок на автомобили (тест-драйв)
+                if (isCarApplication && app.date) {
+                    const formattedAppDate = new Date(app.date).toLocaleDateString('ru-RU');
+                    dateTimeInfo = `
+                        <div class="application-detail">
+                            <span class="detail-label">Дата тест-драйва:</span>
+                            <span class="detail-value">${formattedAppDate}</span>
+                        </div>
+                    `;
+                    
+                    if (app.time) {
+                        dateTimeInfo += `
+                            <div class="application-detail">
+                                <span class="detail-label">Время тест-драйва:</span>
+                                <span class="detail-value">${app.time}</span>
+                            </div>
+                        `;
+                    }
+                }
+                // Для заявок на услуги
+                else if (!isCarApplication && app.date) {
+                    const formattedAppDate = new Date(app.date).toLocaleDateString('ru-RU');
+                    dateTimeInfo = `
+                        <div class="application-detail">
+                            <span class="detail-label">Дата услуги:</span>
+                            <span class="detail-value">${formattedAppDate}</span>
+                        </div>
+                    `;
+                    
+                    if (app.time) {
+                        dateTimeInfo += `
+                            <div class="application-detail">
+                                <span class="detail-label">Время услуги:</span>
+                                <span class="detail-value">${app.time}</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Определяем, можно ли отменить заявку
+                const canCancel = app.status === 'новая' || app.status === 'в обработке';
+                
+                // Получаем имя и фамилию из заявки
+                const firstName = app.firstName || '';
+                const lastName = app.lastName || '';
+                const fullName = firstName && lastName ? `${lastName} ${firstName}` : 'Не указано';
+                
+                applicationCard.innerHTML = `
+                    <div class="application-header">
+                        <div>
+                            <div class="application-title">${isCarApplication ? app.car : app.service}</div>
+                            <div class="application-type">${isCarApplication ? 'Автомобиль' : 'Услуга'}</div>
+                        </div>
+                        <div class="application-date">Создано: ${formattedDate}</div>
+                    </div>
+                    <div class="application-details">
+                        <div class="application-detail">
+                            <span class="detail-label">Имя:</span>
+                            <span class="detail-value">${fullName}</span>
+                        </div>
+                        <div class="application-detail">
+                            <span class="detail-label">Телефон:</span>
+                            <span class="detail-value">${app.phone || 'Не указан'}</span>
+                        </div>
+                        ${isCarApplication ? `
+                            <div class="application-detail">
+                                <span class="detail-label">Цена:</span>
+                                <span class="detail-value">${app.carPrice || 'Не указана'}</span>
+                            </div>
+                        ` : ''}
+                        ${dateTimeInfo}
+                        ${app.notes ? `
+                            <div class="application-detail">
+                                <span class="detail-label">Примечания:</span>
+                                <span class="detail-value">${app.notes}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="application-footer">
+                        <div class="status-badge status-${getStatusClass(app.status)}">${getStatusText(app.status)}</div>
+                        ${canCancel ? `
+                            <button class="btn btn-danger btn-small" onclick="cancelApplication(${app.id}, '${applicationType}')">
+                                <i class="fas fa-times"></i> Отменить
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(applicationCard);
+            });
+        }
+
+        // Получение класса для статуса
+        function getStatusClass(status) {
+            const statusMap = {
+                'новая': 'new',
+                'в обработке': 'processing',
+                'завершена': 'completed',
+                'отменена': 'cancelled'
+            };
+            
+            return statusMap[status] || 'new';
+        }
+
+        // Получение текста статуса
+        function getStatusText(status) {
+            const statusMap = {
+                'новая': 'Новая',
+                'в обработке': 'В обработке',
+                'завершена': 'Завершена',
+                'отменена': 'Отменена'
+            };
+            
+            return statusMap[status] || status;
+        }
+
+        // Отмена заявки (СИНХРОНИЗИРОВАННАЯ)
+        function cancelApplication(applicationId, applicationType) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    
+                    <div class="modal-header">
+                        <h2 style="margin: 0; color: var(--dark);">Отмена заявки</h2>
+                    </div>
+                    <div class="modal-body">
+                        <p style="margin-bottom: 20px;">Вы уверены, что хотите отменить эту заявку?</p>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 30px;">
+                            <button class="btn btn-danger" onclick="confirmCancelApplication(${applicationId}, '${applicationType}')" style="flex: 1;">
+                                <i class="fas fa-times"></i> Да, отменить
+                            </button>
+                            <button class="btn" onclick="this.closest('.modal-overlay').remove()" style="flex: 1; background: #6c757d; color: white;">
+                                Нет, оставить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Закрытие по клику вне модального окна
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Подтверждение отмены заявки (СИНХРОНИЗИРОВАННАЯ)
+        function confirmCancelApplication(applicationId, applicationType) {
+            // Определяем, в каком хранилище находится заявка
+            const storageKey = applicationType === 'car' ? 'carApplications' : 'serviceApplications';
+            
+            // Получаем заявки из localStorage
+            let applications = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            
+            // Находим индекс заявки
+            const applicationIndex = applications.findIndex(app => app.id === applicationId);
+            
+            if (applicationIndex !== -1) {
+                // Обновляем статус заявки на "отменена"
+                applications[applicationIndex].status = 'отменена';
+                
+                // Добавляем информацию о том, кто отменил заявку
+                const userState = JSON.parse(localStorage.getItem('userState'));
+                if (userState) {
+                    applications[applicationIndex].cancelledBy = userState.userLogin;
+                    applications[applicationIndex].cancelledAt = new Date().toISOString();
+                }
+                
+                // Сохраняем обновленные заявки в localStorage (СИНХРОНИЗАЦИЯ)
+                localStorage.setItem(storageKey, JSON.stringify(applications));
+                
+                // Показываем уведомление об успешной отмене
+                showNotification('Заявка успешно отменена', 'success');
+                
+                // Закрываем модальное окно
+                const modalOverlay = document.querySelector('.modal-overlay');
+                if (modalOverlay) modalOverlay.remove();
+                
+                // Перезагружаем заявки
+                if (userState && userState.userLogin) {
+                    loadApplications(userState.userLogin);
+                }
+                
+                // Синхронизация: отправляем событие об отмене заявки
+                syncCancellation(applicationId, applicationType, userState.userLogin);
+            } else {
+                showNotification('Ошибка при отмене заявки', 'error');
+            }
+        }
+
+        // СИНХРОНИЗАЦИЯ: Отправка события об отмене заявки
+        function syncCancellation(applicationId, applicationType, cancelledBy) {
+            const syncEvent = new CustomEvent('applicationCancelled', {
+                detail: {
+                    applicationId: applicationId,
+                    applicationType: applicationType,
+                    cancelledBy: cancelledBy,
+                    cancelledAt: new Date().toISOString(),
+                    status: 'отменена'
+                }
+            });
+            window.dispatchEvent(syncEvent);
+        }
+
+        // Функция показа уведомлений
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.background = type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Слушаем события синхронизации от админ-панели
+        window.addEventListener('applicationStatusChanged', function(event) {
+            const detail = event.detail;
+            const userState = JSON.parse(localStorage.getItem('userState'));
+            
+            if (userState && userState.userLogin) {
+                // Перезагружаем заявки если изменился статус заявки текущего пользователя
+                loadApplications(userState.userLogin);
+                showNotification('Статус заявки обновлен', 'info');
+            }
+        });
+
+        window.addEventListener('userDataChanged', function(event) {
+            const detail = event.detail;
+            const userState = JSON.parse(localStorage.getItem('userState'));
+            
+            if (userState && userState.userLogin === detail.username) {
+                // Перезагружаем данные пользователя
+                loadUserData(userState);
+                showNotification('Данные профиля обновлены администратором', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

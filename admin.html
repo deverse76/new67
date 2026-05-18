@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Управление автосалоном</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f7fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+       header {
+            background: linear-gradient(135deg, var(--dark), #2a2a2a);
+            color: white;
+            box-shadow: 30px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px ;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            animation: modalAppear 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 30px 30px 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Подвал */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Админ панель - Герой */
+        .admin-hero {
+            background: linear-gradient(135deg, var(--primary), #4a7cf7);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+
+        .admin-hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .admin-hero p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        /* Карточки статистики */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 15px;
+        }
+
+        /* Вкладки */
+        .admin-tabs {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--gray-light);
+            border-bottom: 1px solid #e0e0e0;
+            overflow-x: auto;
+            padding: 0 20px;
+        }
+
+        .tab-button {
+            padding: 20px 30px;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            position: relative;
+            font-size: 16px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+            background: rgba(0,0,0,0.02);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Таблицы */
+        .admin-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .table-header {
+            background: var(--gray-light);
+            padding: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-body {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--gray-light);
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 18px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-processing {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Формы */
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-section h3 {
+            margin-bottom: 25px;
+            color: var(--dark);
+            font-size: 24px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Действия */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-view {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .action-edit {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .action-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .action-info {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Поиск и фильтры */
+        .search-filter {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.info {
+            background: var(--info);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        /* Стили для шаблонов */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .template-image {
+            height: 200px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f8f9fa;
+        }
+
+        .template-info {
+            padding: 20px;
+        }
+
+        .template-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .template-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .template-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .template-feature {
+            background: var(--light);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .template-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .template-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .template-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .template-btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .template-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .loading i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--dark);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+                padding: 0;
+            }
+            
+            .tab-button {
+                padding: 15px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .tab-button.active::after {
+                height: 100%;
+                width: 3px;
+                left: auto;
+                right: 0;
+            }
+            
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .admin-hero h1 {
+                font-size: 28px;
+            }
+            
+            .admin-hero p {
+                font-size: 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .template-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+            <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Панель администратора</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                            <li><a href="index.html"><i class="fas fa-home"></i> На сайт</a></li>
+                            <li><a href="admin.html"><i class="fas fa-cog"></i> Управление</a></li>
+                            <li><a href="news_public.html"><i class="fas fa-newspaper"></i> Новости ВК</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="auth-section" id="auth-section">
+                        <!-- Заполняется через auth.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Герой секция админки -->
+    <section class="admin-hero">
+        <div class="container">
+            <h1>Панель управления автосалоном</h1>
+            <p>Управление автомобилями, заявками и пользователями</p>
+        </div>
+    </section>
+
+    <!-- Основной контент админки -->
+    <div class="container">
+        <!-- Карточки статистики -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #326BF6, #4a7cf7);">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="cars-count">0</div>
+                    <div class="stat-label">Автомобилей в каталоге</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b35, #ff8c5a);">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="orders-count">0</div>
+                    <div class="stat-label">Заявок на авто</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #28a745, #48c774);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="users-count">0</div>
+                    <div class="stat-label">Зарегистрировано</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #17a2b8, #38c9df);">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value" id="services-count">0</div>
+                    <div class="stat-label">Заявок на услуги</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="admin-tabs">
+            <div class="tabs-header">
+                <button class="tab-button active" onclick="switchTab('templates')">
+                    <i class="fas fa-clipboard-list"></i> Шаблоны
+                </button>
+            
+                <button class="tab-button" onclick="switchTab('cars')">
+                    <i class="fas fa-car"></i> Автомобили
+                </button>
+                <button class="tab-button" onclick="switchTab('orders')">
+                    <i class="fas fa-shopping-cart"></i> Заявки на авто
+                </button>
+                <button class="tab-button" onclick="switchTab('services')">
+                    <i class="fas fa-tools"></i> Заявки на услуги
+                </button>
+                <button class="tab-button" onclick="switchTab('users')">
+                    <i class="fas fa-users"></i> Пользователи
+                </button>
+            </div>
+
+            <!-- Вкладка Готовые шаблоны -->
+            <div id="tab-templates" class="tab-content active">
+                <div class="form-section">
+                    <h3>Готовые шаблоны автомобилей</h3>
+                    <p style="margin-bottom: 25px; color: var(--gray);">
+                        Выберите готовый шаблон автомобиля и добавьте его в каталог одним кликом.
+                    </p>
+                    
+                    <div class="templates-grid" id="templates-grid">
+                        <!-- Шаблоны будут загружены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Добавление авто -->
+            <div id="tab-add-car" class="tab-content">
+                <div class="form-section">
+                    <h3>Добавить новый автомобиль</h3>
+                    <form id="add-car-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Марка</label>
+                                <input type="text" class="form-input" id="car-brand" placeholder="Toyota, BMW, Mercedes..." required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Модель</label>
+                                <input type="text" class="form-input" id="car-model" placeholder="Camry, X5, C-Class..." required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Год выпуска</label>
+                                <input type="number" class="form-input" id="car-year" min="2000" max="2024" value="2023" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Цена (руб.)</label>
+                                <input type="text" class="form-input" id="car-price" placeholder="2 450 000 ₽" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Тип кузова</label>
+                                <select class="form-input" id="car-body-type" required>
+                                    <option value="sedan">Седан</option>
+                                    <option value="suv">Внедорожник</option>
+                                    <option value="hatchback">Хэтчбек</option>
+                                    <option value="coupe">Купе</option>
+                                    <option value="wagon">Универсал</option>
+                                    <option value="minivan">Минивэн</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Тип топлива</label>
+                                <select class="form-input" id="car-fuel-type" required>
+                                    <option value="petrol">Бензин</option>
+                                    <option value="diesel">Дизель</option>
+                                    <option value="hybrid">Гибрид</option>
+                                    <option value="electric">Электрический</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Объем двигателя (л)</label>
+                                <input type="text" class="form-input" id="car-engine" placeholder="2.5 л">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Коробка передач</label>
+                                <select class="form-input" id="car-transmission" required>
+                                    <option value="automatic">Автомат</option>
+                                    <option value="manual">Механическая</option>
+                                    <option value="robot">Робот</option>
+                                    <option value="cvt">Вариатор</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Привод</label>
+                                <select class="form-input" id="car-drive" required>
+                                    <option value="front">Передний</option>
+                                    <option value="rear">Задний</option>
+                                    <option value="all">Полный</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Бейдж (необязательно)</label>
+                                <input type="text" class="form-input" id="car-badge" placeholder="НОВИНКА, ВЫГОДА...">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">URL изображения</label>
+                            <input type="url" class="form-input" id="car-image" placeholder="https://example.com/car.jpg" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-input form-textarea" id="car-description" placeholder="Подробное описание автомобиля..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Особенности (через запятую)</label>
+                            <input type="text" class="form-input" id="car-features" placeholder="Бензин, Автомат, 2.5 л, Кожаный салон..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Характеристики (каждая с новой строки)</label>
+                            <textarea class="form-input form-textarea" id="car-specs" placeholder="Двигатель: 2.5 л, 203 л.с.
+Коробка передач: Автоматическая
+Привод: Передний
+Расход топлива: 7.8 л/100км
+Разгон 0-100 км/ч: 8.3 сек
+Объем багажника: 524 л" required></textarea>
+                            <small>Формат: Название: значение</small>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button type="submit" class="btn btn-success" style="flex: 1;">
+                                <i class="fas fa-plus"></i> Добавить автомобиль
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetCarForm()" style="flex: 1;">
+                                <i class="fas fa-redo"></i> Очистить форму
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Вкладка Все автомобили -->
+            <div id="tab-cars" class="tab-content">
+                <div class="search-filter">
+                    <div class="search-row">
+                        <input type="text" class="search-input" id="search-cars" placeholder="Поиск по марке, модели или году...">
+                        <button class="btn btn-primary" onclick="searchCars()">
+                            <i class="fas fa-search"></i> Найти
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-table">
+                    <div class="table-header">
+                        <h3>Все автомобили в каталоге</h3>
+                    </div>
+                    <div class="table-body">
+                        <table id="cars-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Марка/Модель</th>
+                                    <th>Год</th>
+                                    <th>Цена</th>
+                                    <th>Тип</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Заявки на авто -->
+            <div id="tab-orders" class="tab-content">
+                <div class="search-filter">
+                    <div class="search-row">
+                        <input type="text" class="search-input" id="search-orders" placeholder="Поиск по имени, телефону или автомобилю...">
+                        <button class="btn btn-primary" onclick="searchOrders()">
+                            <i class="fas fa-search"></i> Найти
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-table">
+                    <div class="table-header">
+                        <h3>Список заявок на автомобили</h3>
+                    </div>
+                    <div class="table-body">
+                        <table id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Автомобиль</th>
+                                    <th>Телефон</th>
+                                    <th>Дата</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Заявки на услуги -->
+            <div id="tab-services" class="tab-content">
+                <div class="search-filter">
+                    <div class="search-row">
+                        <input type="text" class="search-input" id="search-services" placeholder="Поиск по имени, телефону или услуге...">
+                        <button class="btn btn-primary" onclick="searchServices()">
+                            <i class="fas fa-search"></i> Найти
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-table">
+                    <div class="table-header">
+                        <h3>Заявки на услуги автосервиса</h3>
+                    </div>
+                    <div class="table-body">
+                        <table id="services-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Услуга</th>
+                                    <th>Телефон</th>
+                                    <th>Дата/время</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Пользователи -->
+            <div id="tab-users" class="tab-content">
+                <div class="search-filter">
+                    <div class="search-row">
+                        <input type="text" class="search-input" id="search-users" placeholder="Поиск по имени, email или телефону...">
+                        <button class="btn btn-primary" onclick="searchUsers()">
+                            <i class="fas fa-search"></i> Найти
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-table">
+                    <div class="table-header">
+                        <h3>Зарегистрированные пользователи</h3>
+                    </div>
+                    <div class="table-body">
+                        <table id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Имя Фамилия</th>
+                                    <th>Логин</th>
+                                    <th>Телефон</th>
+                                    <th>Регистрация</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир - Админ-панель</h3>
+                    <p>Панель управления автомобильным салоном. Только для авторизованного персонала.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная сайта</a></li>
+                        <li><a href="admin.html"><i class="fas fa-chevron-right"></i> Панель управления</a></li>
+                        <li><a href="news_public.html"><i class="fas fa-chevron-right"></i> Новости ВК</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Уфа, ул. Кирова, д. 5</a></li>
+                        <li><a href="tel:+73471234567"><i class="fas fa-phone"></i> +7 (347) 123-45-67</a></li>
+                        <li><a href="mailto:admin@avtomir-ufa.ru"><i class="fas fa-envelope"></i> admin@avtomir-ufa.ru</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00-21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Автосалон "АвтоМир". Админ-панель. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Состояние пользователя
+        let userState = {
+            isLoggedIn: false,
+            userName: '',
+            userLogin: '',
+            userInitials: '',
+            isAdmin: false
+        };
+
+        // Данные автомобилей
+        let carsData = [];
+        let ordersData = [];
+        let servicesData = []; // Новый массив для заявок на услуги
+        let usersData = [];
+
+        // Готовые шаблоны машин
+        const carTemplates = [
+            {
+                id: "template-1",
+                name: "Toyota Camry 2023",
+                price: "2 450 000 ₽",
+                image: "https://sun9-28.userapi.com/s/v1/ig2/dbkNnFt5GkQPO0mtcO5lnYGYry3ppBqaIhmN0na90LbEJUk-0B7pku-tgq6z0TFCAcjeulzIpyB7kXRNYL2a9LAW.jpg?quality=95&as=32x21,48x32,72x48,108x72,160x107,240x160,360x240,480x320,540x360,640x427,720x480,1080x720,1280x853,1440x960,1470x980&from=bu&cs=1470x0",
+                features: ["Бензин", "Автомат", "2.5 л"],
+                badge: "НОВИНКА",
+                brand: "toyota",
+                bodyType: "sedan",
+                fuelType: "petrol",
+                engine: "2.5 л, 203 л.с.",
+                transmission: "Автоматическая",
+                drive: "Передний",
+                description: "Современный седан с передовыми технологиями и элегантным дизайном. Идеален для города и дальних поездок.",
+                specs: {
+                    engine: "2.5 л, 203 л.с.",
+                    transmission: "Автоматическая",
+                    drive: "Передний",
+                    fuel: "7.8 л/100км",
+                    acceleration: "8.3 сек",
+                    trunk: "524 л"
+                }
+            },
+            {
+                id: "template-2",
+                name: "BMW X5 2022",
+                price: "5 800 000 ₽",
+                image: "https://sun9-62.userapi.com/s/v1/ig2/eVO_ia9IlzL9esm0DYXuqwZbxa7fMG6kNogX_5rOGfdFTm3jNoyi-qkmu8RsbFxQGkIPwzDe4EYY2en10dHA7k5R.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480,720x540,800x600&from=bu&cs=800x0",
+                features: ["Дизель", "Автомат", "3.0 л"],
+                badge: "ПРЕМИУМ",
+                brand: "bmw",
+                bodyType: "suv",
+                fuelType: "diesel",
+                engine: "3.0 л, 340 л.с.",
+                transmission: "Автоматическая 8-ст",
+                drive: "Полный",
+                description: "Роскошный внедорожник премиум-класса с мощным двигателем и передовыми системами безопасности.",
+                specs: {
+                    engine: "3.0 л, 340 л.с.",
+                    transmission: "Автоматическая 8-ст",
+                    drive: "Полный",
+                    fuel: "9.2 л/100км",
+                    acceleration: "5.5 сек",
+                    trunk: "650 л"
+                }
+            },
+            {
+                id: "template-3",
+                name: "Mercedes-Benz C-Class",
+                price: "3 900 000 ₽",
+                image: "https://sun9-64.userapi.com/s/v1/ig2/inf0R5Kjv0XDZvamZrntipab4GDN9PQwjYS8u6Zg4qOc6br0q9sxul8gHddsRieIYss6KZHRTpIIh8HQLONF7Hvv.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480,720x540,1080x810,1200x900&from=bu&cs=1200x0",
+                features: ["Бензин", "Автомат", "2.0 л"],
+                badge: "",
+                brand: "mercedes",
+                bodyType: "sedan",
+                fuelType: "petrol",
+                engine: "2.0 л, 258 л.с.",
+                transmission: "Автоматическая 9-ст",
+                drive: "Задний",
+                description: "Элегантный бизнес-седан с роскошным интерьером и инновационными технологиями.",
+                specs: {
+                    engine: "2.0 л, 258 л.с.",
+                    transmission: "Автоматическая 9-ст",
+                    drive: "Задний",
+                    fuel: "7.5 л/100км",
+                    acceleration: "6.0 сек",
+                    trunk: "455 л"
+                }
+            },
+            {
+                id: "template-4",
+                name: "Audi Q7 2023",
+                price: "6 200 000 ₽",
+                image: "https://sun9-24.userapi.com/s/v1/ig2/UItrT8WKPzHBtdOIs8o2LYc_iyw5FQorLVriWn8Ci1yeuxgZ_E5F6YPDlFOpW9ebQ-BN2sME-RblnAaVZbMoA_cu.jpg?quality=95&as=32x21,48x32,72x48,108x72,160x106,240x159,360x239,480x319,540x359,640x425,720x478,960x638&from=bu&cs=960x0",
+                features: ["Бензин", "Автомат", "3.0 л"],
+                badge: "ВЫГОДА 10%",
+                brand: "audi",
+                bodyType: "suv",
+                fuelType: "petrol",
+                engine: "3.0 л, 340 л.с.",
+                transmission: "Автоматическая",
+                drive: "Полный",
+                description: "Просторный премиальный внедорожник с современным дизайном и передовыми технологиями.",
+                specs: {
+                    engine: "3.0 л, 340 л.с.",
+                    transmission: "Автоматическая",
+                    drive: "Полный",
+                    fuel: "9.5 л/100км",
+                    acceleration: "5.9 сек",
+                    trunk: "740 л"
+                }
+            },
+            {
+                id: "template-5",
+                name: "Volkswagen Tiguan 2022",
+                price: "2 800 000 ₽",
+                image: "https://sun9-47.userapi.com/s/v1/ig2/c5s3w2vchx049jko1snyE8vlsLiiGel1l51B9HHt3UWLon2gZdF75Rv6Eh8DIsg0szHCMjxd-j_pDqTfR0C_LxqE.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480&from=bu&cs=640x0",
+                features: ["Бензин", "Автомат", "2.0 л"],
+                badge: "",
+                brand: "volkswagen",
+                bodyType: "suv",
+                fuelType: "petrol",
+                engine: "2.0 л, 190 л.с.",
+                transmission: "Автоматическая",
+                drive: "Полный",
+                description: "Компактный кроссовер с практичным дизайном и отличными ходовыми качествами.",
+                specs: {
+                    engine: "2.0 л, 190 л.с.",
+                    transmission: "Автоматическая",
+                    drive: "Полный",
+                    fuel: "8.2 л/100км",
+                    acceleration: "7.8 сек",
+                    trunk: "615 л"
+                }
+            },
+            {
+                id: "template-6",
+                name: "Hyundai Tucson 2023",
+                price: "2 300 000 ₽",
+                image: "https://sun9-77.userapi.com/s/v1/ig2/LVXZJkMgDM_ic1GjKPT_rm2pMPR2k811PB6MvWG9_y7-1BqzfeD7emeILrm8mg96xXqUbozQFRsi7wpfkWWOjmuR.jpg?quality=95&as=32x21,48x32,72x48,108x72,160x107,240x160,360x240,480x320,540x360,640x427,720x480,864x576&from=bu&cs=864x0",
+                features: ["Бензин", "Автомат", "2.5 л"],
+                badge: "ПОПУЛЯРНЫЙ",
+                brand: "hyundai",
+                bodyType: "suv",
+                fuelType: "petrol",
+                engine: "2.5 л, 190 л.с.",
+                transmission: "Автоматическая",
+                drive: "Передний",
+                description: "Стильный кроссовер с агрессивным дизайном и богатым оснащением.",
+                specs: {
+                    engine: "2.5 л, 190 л.с.",
+                    transmission: "Автоматическая",
+                    drive: "Передний",
+                    fuel: "7.8 л/100км",
+                    acceleration: "8.8 сек",
+                    trunk: "539 л"
+                }
+            }
+        ];
+
+        // Загрузка состояния из localStorage
+        function loadUserState() {
+            const saved = localStorage.getItem('userState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                userState = { ...userState, ...parsed };
+            }
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Инициализация шапки
+        function initHeader() {
+            loadUserState();
+            renderAuthSection();
+            setupMobileMenu();
+            
+            // Проверка прав администратора
+            if (!userState.isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Проверка на администратора
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const currentUser = users.find(u => u.username === userState.userLogin);
+            
+            if (currentUser && currentUser.role === 'admin') {
+                userState.isAdmin = true;
+            } else {
+                showNotification('Доступ запрещен. Требуются права администратора', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+
+        // Рендер секции авторизации
+        function renderAuthSection() {
+            const authSection = document.getElementById('auth-section');
+            
+            if (userState.isLoggedIn) {
+                authSection.innerHTML = `
+                    <div class="user-profile" id="user-profile">
+                        <div class="user-avatar">
+                            ${userState.userInitials}
+                        </div>
+                        <div class="user-name">${userState.userName}</div>
+                        <div class="user-menu" id="user-menu">
+                            <a href="profile.html" class="user-menu-item">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            <a href="index.html" class="user-menu-item">
+                                <i class="fas fa-home"></i> На сайт
+                            </a>
+                            <button class="user-menu-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Добавляем обработчик для меню пользователя
+                const userProfile = document.getElementById('user-profile');
+                const userMenu = document.getElementById('user-menu');
+
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('show');
+                });
+
+                // Закрытие меню при клике вне его
+                document.addEventListener('click', function() {
+                    userMenu.classList.remove('show');
+                });
+            } else {
+                // Показываем кнопки входа и регистрации
+                authSection.innerHTML = `
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-small">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                        <a href="register.html" class="btn btn-small btn-outline">
+                            <i class="fas fa-user-plus"></i> Регистрация
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Мобильное меню
+        function setupMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navContainer = document.querySelector('.nav-container');
+            
+            mobileMenu.addEventListener('click', function() {
+                navContainer.classList.toggle('show');
+            });
+
+            // Закрытие меню при клике вне его
+            document.addEventListener('click', function(e) {
+                if (!navContainer.contains(e.target) && !mobileMenu.contains(e.target)) {
+                    navContainer.classList.remove('show');
+                }
+            });
+        }
+
+        // Загрузка данных
+        function loadData() {
+            // Загрузка автомобилей
+            const savedCars = localStorage.getItem('cars');
+            if (savedCars) {
+                carsData = JSON.parse(savedCars);
+            }
+            
+            // Загрузка заявок на автомобили
+            const savedOrders = localStorage.getItem('carApplications');
+            if (savedOrders) {
+                ordersData = JSON.parse(savedOrders);
+            }
+            
+            // Загрузка заявок на услуги из services.html
+            const savedServices = localStorage.getItem('serviceApplications');
+            if (savedServices) {
+                servicesData = JSON.parse(savedServices);
+            }
+            
+            // Загрузка пользователей
+            const savedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            usersData = savedUsers;
+            
+            // Обновление статистики
+            updateStats();
+            
+            // Загрузка шаблонов
+            loadTemplates();
+            
+            // Загрузка таблиц
+            loadCarsTable();
+            loadOrdersTable();
+            loadServicesTable();
+            loadUsersTable();
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            document.getElementById('cars-count').textContent = carsData.length || 0;
+            document.getElementById('orders-count').textContent = ordersData.length || 0;
+            document.getElementById('users-count').textContent = usersData.length || 0;
+            document.getElementById('services-count').textContent = servicesData.length || 0;
+        }
+
+        // Переключение вкладок
+        function switchTab(tabName) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс со всех кнопок
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            const tab = document.getElementById('tab-' + tabName);
+            if (tab) {
+                tab.classList.add('active');
+            }
+            
+            // Сделать активной кнопку вкладки
+            event.target.classList.add('active');
+        }
+
+        // Загрузка шаблонов
+        function loadTemplates() {
+            const templatesGrid = document.getElementById('templates-grid');
+            if (!templatesGrid) return;
+            
+            templatesGrid.innerHTML = '';
+            
+            carTemplates.forEach(template => {
+                const templateCard = document.createElement('div');
+                templateCard.className = 'template-card';
+                templateCard.innerHTML = `
+                    <div class="template-image" style="background-image: url('${template.image}')"></div>
+                    <div class="template-info">
+                        ${template.badge ? `<div class="template-badge">${template.badge}</div>` : ''}
+                        <div class="template-title">${template.name}</div>
+                        <div class="template-price">${template.price}</div>
+                        <div class="template-features">
+                            ${template.features.map(feature => `
+                                <span class="template-feature">
+                                    <i class="fas fa-check"></i> ${feature}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <div class="template-actions">
+                            <button class="template-btn template-btn-primary" onclick="addFromTemplate('${template.id}')">
+                                <i class="fas fa-plus"></i> Добавить в каталог
+                            </button>
+                        </div>
+                    </div>
+                `;
+                templatesGrid.appendChild(templateCard);
+            });
+        }
+
+        // Добавление автомобиля из шаблона
+        function addFromTemplate(templateId) {
+            const template = carTemplates.find(t => t.id === templateId);
+            if (!template) return;
+            
+            // Создаем новый автомобиль
+            const newCar = {
+                id: Date.now(),
+                name: template.name,
+                price: template.price,
+                image: template.image,
+                features: template.features,
+                badge: template.badge || "",
+                brand: template.brand || "",
+                bodyType: template.bodyType,
+                fuelType: template.fuelType,
+                engine: template.engine || "",
+                transmission: template.transmission || "automatic",
+                drive: template.drive || "front",
+                description: template.description,
+                specs: template.specs || {},
+                createdAt: new Date().toISOString(),
+                isVisible: true
+            };
+            
+            // Добавляем в массив и сохраняем
+            if (!carsData) carsData = [];
+            carsData.push(newCar);
+            localStorage.setItem('cars', JSON.stringify(carsData));
+            
+            // Обновляем статистику
+            updateStats();
+            
+            // Показываем уведомление
+            showNotification(`Автомобиль "${template.name}" добавлен в каталог!`, 'success');
+            
+            // Переключаемся на вкладку с автомобилями
+            setTimeout(() => {
+                switchTab('cars');
+                loadCarsTable();
+            }, 1500);
+        }
+
+        // Форма добавления автомобиля
+        document.getElementById('add-car-form')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Получение данных из формы
+            const brand = document.getElementById('car-brand').value;
+            const model = document.getElementById('car-model').value;
+            const year = document.getElementById('car-year').value;
+            const price = document.getElementById('car-price').value;
+            const bodyType = document.getElementById('car-body-type').value;
+            const fuelType = document.getElementById('car-fuel-type').value;
+            const engine = document.getElementById('car-engine').value;
+            const transmission = document.getElementById('car-transmission').value;
+            const drive = document.getElementById('car-drive').value;
+            const badge = document.getElementById('car-badge').value;
+            const image = document.getElementById('car-image').value;
+            const description = document.getElementById('car-description').value;
+            const features = document.getElementById('car-features').value.split(',').map(f => f.trim());
+            
+            // Парсинг характеристик
+            const specs = {};
+            const specsText = document.getElementById('car-specs').value.split('\n');
+            specsText.forEach(line => {
+                const [key, value] = line.split(':').map(s => s.trim());
+                if (key && value) {
+                    specs[key.toLowerCase()] = value;
+                }
+            });
+            
+            // Создание нового автомобиля
+            const newCar = {
+                id: Date.now(),
+                name: `${brand} ${model} ${year}`,
+                price: price,
+                image: image,
+                features: features,
+                badge: badge || "",
+                brand: brand.toLowerCase(),
+                model: model.toLowerCase(),
+                year: parseInt(year),
+                bodyType: bodyType,
+                fuelType: fuelType,
+                engine: engine,
+                transmission: transmission,
+                drive: drive,
+                description: description,
+                specs: specs,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Добавление в массив и сохранение
+            if (!carsData) carsData = [];
+            carsData.push(newCar);
+            localStorage.setItem('cars', JSON.stringify(carsData));
+            
+            // Обновление статистики
+            updateStats();
+            
+            // Очистка формы
+            resetCarForm();
+            
+            // Показать уведомление
+            showNotification(`Автомобиль "${brand} ${model}" успешно добавлен!`, 'success');
+        });
+
+        // Очистка формы добавления автомобиля
+        function resetCarForm() {
+            document.getElementById('add-car-form').reset();
+            document.getElementById('car-year').value = "2023";
+        }
+
+        // Загрузка таблицы автомобилей
+        function loadCarsTable(filter = '') {
+            const tbody = document.querySelector('#cars-table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let filteredCars = carsData || [];
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredCars = filteredCars.filter(car => 
+                    car.name.toLowerCase().includes(searchTerm) ||
+                    (car.brand && car.brand.toLowerCase().includes(searchTerm)) ||
+                    (car.model && car.model.toLowerCase().includes(searchTerm)) ||
+                    (car.year && car.year.toString().includes(searchTerm))
+                );
+            }
+            
+            if (filteredCars.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-car" style="font-size: 48px; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                            Автомобили не найдены
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredCars.forEach(car => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${car.id}</td>
+                    <td>
+                        <strong>${car.name}</strong>
+                        ${car.badge ? `<br><span class="status-badge" style="background: #e3f2fd; color: #1565c0;">${car.badge}</span>` : ''}
+                    </td>
+                    <td>${car.year || ''}</td>
+                    <td><strong>${car.price || ''}</strong></td>
+                    <td>${getBodyTypeName(car.bodyType)}</td>
+                    <td><span class="status-badge status-completed">В наличии</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-edit" onclick="editCar(${car.id})">
+                                <i class="fas fa-edit"></i> Изменить
+                            </button>
+                            <button class="action-btn action-delete" onclick="deleteCar(${car.id})">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Поиск автомобилей
+        function searchCars() {
+            const searchTerm = document.getElementById('search-cars').value;
+            loadCarsTable(searchTerm);
+        }
+
+        // Получение названия типа кузова
+        function getBodyTypeName(type) {
+            const types = {
+                'sedan': 'Седан',
+                'suv': 'Внедорожник',
+                'hatchback': 'Хэтчбек',
+                'coupe': 'Купе',
+                'wagon': 'Универсал',
+                'minivan': 'Минивэн'
+            };
+            return types[type] || type;
+        }
+
+        // Удаление автомобиля
+        function deleteCar(carId) {
+            if (confirm('Вы уверены, что хотите удалить этот автомобиль?')) {
+                carsData = carsData.filter(car => car.id !== carId);
+                localStorage.setItem('cars', JSON.stringify(carsData));
+                loadCarsTable();
+                updateStats();
+                showNotification('Автомобиль удален', 'success');
+            }
+        }
+
+        // Загрузка таблицы заявок на автомобили
+        function loadOrdersTable(filter = '') {
+            const tbody = document.querySelector('#orders-table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let filteredOrders = ordersData || [];
+            
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredOrders = filteredOrders.filter(order => 
+                    order.firstName.toLowerCase().includes(searchTerm) ||
+                    order.lastName.toLowerCase().includes(searchTerm) ||
+                    order.phone.toLowerCase().includes(searchTerm) ||
+                    order.car.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredOrders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                            Заявки не найдены
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredOrders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${order.id}</td>
+                    <td>${order.lastName} ${order.firstName}</td>
+                    <td>${order.car}</td>
+                    <td>${order.phone}</td>
+                    <td>${order.date} ${order.time}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-delete" onclick="deleteOrder(${order.id})">
+                                <i class="fas fa-trash"></i> Отменить
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Поиск заявок
+        function searchOrders() {
+            const searchTerm = document.getElementById('search-orders').value;
+            loadOrdersTable(searchTerm);
+        }
+
+        // Удаление заявки
+        function deleteOrder(orderId) {
+            if (confirm('Вы уверены, что хотите отменить эту заявку?')) {
+                ordersData = ordersData.filter(order => order.id !== orderId);
+                localStorage.setItem('carApplications', JSON.stringify(ordersData));
+                loadOrdersTable();
+                updateStats();
+                showNotification('Заявка отменить', 'success');
+            }
+        }
+
+        // Загрузка таблицы заявок на услуги
+        function loadServicesTable(filter = '') {
+            const tbody = document.querySelector('#services-table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let filteredServices = servicesData || [];
+            
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredServices = filteredServices.filter(service => 
+                    service.firstName.toLowerCase().includes(searchTerm) ||
+                    service.lastName.toLowerCase().includes(searchTerm) ||
+                    service.phone.toLowerCase().includes(searchTerm) ||
+                    service.service.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredServices.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-tools" style="font-size: 48px; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                            Заявки на услуги не найдены
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredServices.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${service.id}</td>
+                    <td>${service.lastName} ${service.firstName}</td>
+                    <td>${service.service}</td>
+                    <td>${service.phone}</td>
+                    <td>${service.date} ${service.time}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-delete" onclick="deleteService(${service.id})">
+                                <i class="fas fa-trash"></i> Отменить
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Поиск заявок на услуги
+        function searchServices() {
+            const searchTerm = document.getElementById('search-services').value;
+            loadServicesTable(searchTerm);
+        }
+
+        // Удаление заявки на услугу
+        function deleteService(serviceId) {
+            if (confirm('Вы уверены, что хотите отменить эту заявку на услугу?')) {
+                servicesData = servicesData.filter(service => service.id !== serviceId);
+                localStorage.setItem('serviceApplications', JSON.stringify(servicesData));
+                loadServicesTable();
+                updateStats();
+                showNotification('Заявка на услугу отменена', 'success');
+            }
+        }
+
+        // Загрузка таблицы пользователей
+        function loadUsersTable(filter = '') {
+            const tbody = document.querySelector('#users-table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let filteredUsers = usersData || [];
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredUsers = usersData.filter(user => 
+                    (user.firstName && user.firstName.toLowerCase().includes(searchTerm)) ||
+                    (user.lastName && user.lastName.toLowerCase().includes(searchTerm)) ||
+                    (user.username && user.username.toLowerCase().includes(searchTerm)) ||
+                    (user.phone && user.phone.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-users" style="font-size: 48px; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                            Пользователи не найдены
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredUsers.forEach((user, index) => {
+                const isAdmin = user.role === 'admin';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${user.firstName || ''} ${user.lastName || ''}</strong>
+                        ${user.username ? `<br><small style="color: var(--gray);">@${user.username}</small>` : ''}
+                        ${isAdmin ? '<br><span class="status-badge" style="background: #e3f2fd; color: #1565c0;">Админ</span>' : ''}
+                    </td>
+                    <td>${user.email || user.username || 'Нет'}</td>
+                    <td>${user.phone || 'Не указан'}</td>
+                    <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-delete" onclick="deleteUser('${user.username}')">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Поиск пользователей
+        function searchUsers() {
+            const searchTerm = document.getElementById('search-users').value;
+            loadUsersTable(searchTerm);
+        }
+
+        // Удаление пользователя
+        function deleteUser(username) {
+            if (username === userState.userLogin) {
+                showNotification('Нельзя удалить самого себя', 'error');
+                return;
+            }
+            
+            if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+                usersData = usersData.filter(user => user.username !== username);
+                localStorage.setItem('users', JSON.stringify(usersData));
+                loadUsersTable();
+                updateStats();
+                showNotification('Пользователь удален', 'success');
+            }
+        }
+
+        // Функция выхода
+        function logout() {
+            userState.isLoggedIn = false;
+            userState.userName = '';
+            userState.userLogin = '';
+            userState.userInitials = '';
+            userState.isAdmin = false;
+            
+            localStorage.setItem('userState', JSON.stringify(userState));
+            window.location.href = 'login.html';
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            initHeader();
+            loadData();
+            
+            // Создаем тестового администратора если его нет
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const adminExists = users.find(u => u.username === 'admin');
+            
+            if (!adminExists) {
+                users.push({
+                    username: 'admin',
+                    password: 'admin123',
+                    firstName: 'Администратор',
+                    lastName: 'Системы',
+                    email: 'admin@avtomir.ru',
+                    phone: '+7 (999) 999-99-99',
+                    role: 'admin',
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        });
+    </script>
+</body>
+</html>

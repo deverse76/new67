@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Услуги - АвтоМир</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение общей системы авторизации -->
+    <script src="auth.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #326BF6;
+            --secondary: #ff6b35;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --admin-red: #dc3545;
+        }
+
+        body {
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, var(--primary), #326BF6);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* Навигация */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Блок авторизации */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 10px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .user-menu-item:hover {
+            background: var(--light);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 30px 30px 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Стили для бейджей ролей из auth.js */
+        .role-badge {
+            font-size: 10px !important;
+            padding: 3px 10px !important;
+            border-radius: 12px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            margin-top: 2px !important;
+        }
+        .role-badge.admin {
+            background: linear-gradient(135deg, var(--admin-red), #c82333) !important;
+            color: white !important;
+            border: 1px solid #ff6b6b !important;
+        }
+        .role-badge.user {
+            background: linear-gradient(135deg, #28a745, #218838) !important;
+            color: white !important;
+            border: 1px solid #6fcf97 !important;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .user-role {
+            font-size: 10px;
+        }
+        .admin-crown {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #ffc107;
+            color: #000;
+            font-size: 8px;
+            padding: 2px 4px;
+            border-radius: 50%;
+            border: 1px solid white;
+        }
+        .admin-only {
+            position: relative;
+        }
+        .admin-only::before {
+            content: "ADMIN";
+            position: absolute;
+            top: -8px;
+            right: 5px;
+            background: var(--admin-red);
+            color: white;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .menu-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 5px 0;
+        }
+        .logout-btn {
+            color: var(--admin-red) !important;
+        }
+        .logout-btn:hover {
+            background: #fff5f5 !important;
+        }
+        
+        /* Стили для админских пунктов в навигации */
+        nav a.admin-only {
+            position: relative;
+            background: rgba(220, 53, 69, 0.1) !important;
+            border: 1px solid rgba(220, 53, 69, 0.3) !important;
+        }
+        nav a.admin-only:hover {
+            background: rgba(220, 53, 69, 0.2) !important;
+        }
+        nav a.admin-only i {
+            color: #dc3545 !important;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Герой секция */
+        .services-hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://sun9-20.userapi.com/s/v1/ig2/rneJ4WG11n0ndR_LG0jktOSZs-N-V8K7q_LhSRK38iz0wgZG8eXY_Ac1FbyWSoFQmPKzcn4Ff2pzz7ZM6GOoS2R3.jpg?quality=95&as=32x19,48x29,72x44,108x66,160x97,240x146,360x219,480x292,540x329,640x390,720x439,1080x658,1280x780,1440x877,1921x1170&from=bu&cs=1921x0');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .services-hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .services-hero p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        /* Секции */
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            font-size: 18px;
+        }
+
+        .services {
+            padding: 80px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .service-icon {
+            font-size: 54px;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .service-card h3 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: var(--dark);
+        }
+
+        .service-card p {
+            color: var(--gray);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .service-features {
+            text-align: left;
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+
+        .service-features li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gray);
+        }
+
+        .service-features i {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .service-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .process-step {
+            text-align: center;
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .process-step h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .process-step p {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* Подвал */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #999;
+        }
+
+        /* Мобильные стили */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .nav-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 15px;
+            }
+            
+            nav ul {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            
+            .nav-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                padding: 20px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .nav-container.show {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-hero h1 {
+                font-size: 36px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-hero p {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .logo-text span {
+                font-size: 10px;
+            }
+            
+            .logo img {
+                height: 40px;
+            }
+            
+            .services-hero h1 {
+                font-size: 28px;
+            }
+            
+            .service-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://sun9-16.userapi.com/s/v1/ig2/qC83JsRh0SSTABJqc62shw5G9TS0Cz8hhKVTu8GPbChV_a54TP4WH92vmFDsZzfXS7vOzg9fDaA2r1mIf-UwgA_1.jpg?quality=95&as=32x18,48x27,72x41,108x62,160x91,240x137,360x206,480x274,540x309,595x340&from=bu&cs=595x0" alt="АвтоМир логотип">
+                    <div class="logo-text">
+                        <h1>АВТОМИР</h1>
+                        <span>Официальный дилер</span>
+                    </div>
+                </div>
+
+                <button class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                         <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                            <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                            <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                            <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
+                            <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                            <!-- Пункт "Публикация" будет отображаться только для админов через auth.js -->
+                        </ul>
+                    </nav>
+
+                    <div class="auth-section" id="auth-section">
+                        <!-- Будет заполнено через auth.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Герой секция -->
+    <section class="services-hero">
+        <div class="container">
+            <h1>Наши услуги</h1>
+            <p>Полный спектр услуг для вашего автомобиля</p>
+        </div>
+    </section>
+
+    <!-- Услуги -->
+    <section class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Основные услуги</h2>
+                <p>Мы предоставляем комплексные решения для наших клиентов</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-car"></i></div>
+                    <h3>Продажа новых авто</h3>
+                    <p>Широкий выбор новых автомобилей от ведущих мировых производителей с гарантией и полным обслуживанием</p>
+                    <div class="service-price">от 1 500 000 ₽</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Тест-драйв перед покупкой</li>
+                        <li><i class="fas fa-check"></i> Гарантия 3 года</li>
+                        <li><i class="fas fa-check"></i> Страхование КАСКО/ОСАГО</li>
+                        <li><i class="fas fa-check"></i> Трейд-ин вашего авто</li>
+                        <li><i class="fas fa-check"></i> Кредитование от 5.9%</li>
+                    </ul>
+                    <a href="cars.html" class="btn btn-primary">Выбрать авто</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-tools"></i></div>
+                    <h3>Сервисное обслуживание</h3>
+                    <p>Профессиональное техническое обслуживание и ремонт автомобилей любой сложности</p>
+                    <div class="service-price">от 2 500 ₽</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Компьютерная диагностика</li>
+                        <li><i class="fas fa-check"></i> Замена масла и фильтров</li>
+                        <li><i class="fas fa-check"></i> Шиномонтаж и балансировка</li>
+                        <li><i class="fas fa-check"></i> Ремонт двигателя и КПП</li>
+                        <li><i class="fas fa-check"></i> Кузовной ремонт</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showServiceModal('Сервисное обслуживание')">Записаться</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-file-contract"></i></div>
+                    <h3>Оформление документов</h3>
+                    <p>Полное сопровождение сделки и оформление всех необходимых документов</p>
+                    <div class="service-price">от 5 000 ₽</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Регистрация в ГИБДД</li>
+                        <li><i class="fas fa-check"></i> Оформление кредита</li>
+                        <li><i class="fas fa-check"></i> Юридическое сопровождение</li>
+                        <li><i class="fas fa-check"></i> Страховые услуги</li>
+                        <li><i class="fas fa-check"></i> Эвакуация автомобиля</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showServiceModal('Оформление документов')">Узнать больше</button>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-paint-roller"></i></div>
+                    <h3>Дополнительное оборудование</h3>
+                    <p>Установка дополнительного оборудования и тюнинг вашего автомобиля</p>
+                    <div class="service-price">от 10 000 ₽</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Установка аудиосистем</li>
+                        <li><i class="fas fa-check"></i> Антикоррозийная обработка</li>
+                        <li><i class="fas fa-check"></i> Оклейка защитной пленкой</li>
+                        <li><i class="fas fa-check"></i> Установка парктроников</li>
+                        <li><i class="fas fa-check"></i> Чип-тюнинг</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showServiceModal('Дополнительное оборудование')">Заказать</button>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Гарантийное обслуживание</h3>
+                    <p>Обслуживание и ремонт автомобилей в рамках гарантийных обязательств</p>
+                    <div class="service-price">Бесплатно</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Гарантийный ремонт</li>
+                        <li><i class="fas fa-check"></i> Бесплатная диагностика</li>
+                        <li><i class="fas fa-check"></i> Замена расходников</li>
+                        <li><i class="fas fa-check"></i> Техническое обслуживание</li>
+                        <li><i class="fas fa-check"></i> Консультации специалистов</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showServiceModal('Гарантийное обслуживание')">Получить консультацию</button>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-gas-pump"></i></div>
+                    <h3>Шиномонтаж и сезонная замена</h3>
+                    <p>Профессиональный шиномонтаж и хранение резины</p>
+                    <div class="service-price">от 1 500 ₽</div>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Сезонная замена шин</li>
+                        <li><i class="fas fa-check"></i> Балансировка колес</li>
+                        <li><i class="fas fa-check"></i> Ремонт проколов</li>
+                        <li><i class="fas fa-check"></i> Хранение резины</li>
+                        <li><i class="fas fa-check"></i> Продажа шин и дисков</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="showServiceModal('Шиномонтаж')">Записаться</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Процесс работы -->
+    <section class="process" style="background: var(--gray-light); padding: 80px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Как мы работаем</h2>
+                <p>Простой и понятный процесс сотрудничества</p>
+            </div>
+
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Консультация</h3>
+                    <p>Наши специалисты помогут подобрать оптимальный вариант и ответят на все ваши вопросы</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Подбор услуги</h3>
+                    <p>Выбираем услугу, соответствующую вашим требованиям и бюджету</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Запись и оформление</h3>
+                    <p>Записываем на удобное время и оформляем все необходимые документы</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3>Выполнение работ</h3>
+                    <p>Профессионально выполняем все работы в оговоренные сроки</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <h3>Контроль качества</h3>
+                    <p>Тщательно проверяем качество выполненных работ перед выдачей</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <h3>Получение результата</h3>
+                    <p>Вы получаете готовый результат с гарантией качества</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="services" style="padding: 80px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Почему выбирают нас</h2>
+                <p>Наши преимущества для вашего комфорта</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-award"></i></div>
+                    <h3>Опыт работы 15+ лет</h3>
+                    <p>Более 15 лет успешной работы на автомобильном рынке</p>
+                </div>
+
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3>Квалифицированные специалисты</h3>
+                    <p>Профессиональная команда с сертификатами производителей</p>
+                </div>
+
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Гарантия качества</h3>
+                    <p>Предоставляем гарантию на все виды работ и запчасти</p>
+                </div>
+
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-clock"></i></div>
+                    <h3>Экономия времени</h3>
+                    <p>Минимальные сроки выполнения работ без потери качества</p>
+                </div>
+
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-ruble-sign"></i></div>
+                    <h3>Доступные цены</h3>
+                    <p>Конкурентные цены и гибкая система скидок</p>
+                </div>
+
+                <div class="service-card" style="border-top-color: var(--secondary);">
+                    <div class="service-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Круглосуточная поддержка</h3>
+                    <p>Всегда на связи для решения ваших вопросов</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>АвтоМир</h3>
+                    <p>Ваш надежный партнер в мире автомобилей. Более 15 лет на рынке автомобильных услуг.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Главная</a></li>
+                        <li><a href="cars.html"><i class="fas fa-chevron-right"></i> Каталог авто</a></li>
+                        <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
+                        <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Автомобильная, д. 15</a></li>
+                        <li><a href="tel:+74951234567"><i class="fas fa-phone"></i> +7 (495) 123-45-67</a></li>
+                        <li><a href="mailto:info@avtomir.ru"><i class="fas fa-envelope"></i> info@avtomir.ru</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00-21:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Автосалон "АвтоМир". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Используем функцию уведомлений из auth.js
+        function showNotification(message, type = 'success') {
+            if (window.AuthSystem && window.AuthSystem.showNotification) {
+                window.AuthSystem.showNotification(message, type);
+            } else {
+                // Резервная реализация
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.style.background = type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3';
+                
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'}-circle"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+
+        // Получение данных пользователя из auth.js
+        function getUserData() {
+            if (window.AuthSystem && window.AuthSystem.getUserData) {
+                return window.AuthSystem.getUserData();
+            }
+            return null;
+        }
+
+        // Функция проверки доступа к услугам
+        function checkServiceAccess() {
+            if (window.AuthSystem && window.AuthSystem.checkServiceAccess) {
+                return window.AuthSystem.checkServiceAccess();
+            }
+            
+            // Резервная проверка
+            const userState = JSON.parse(localStorage.getItem('userState') || '{}');
+            if (!userState.isLoggedIn) {
+                showNotification('Для записи на услугу необходимо авторизоваться', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        // Функция показа модального окна для записи на услугу
+        function showServiceModal(serviceName) {
+            // ПРОВЕРКА АВТОРИЗАЦИИ через общую систему
+            if (!checkServiceAccess()) {
+                return; // Прерываем выполнение если гость
+            }
+            
+            const userData = getUserData();
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    
+                    <div class="modal-header">
+                        <h2 style="margin: 0; color: var(--dark);">Запись на услугу</h2>
+                    </div>
+                    <div class="modal-body">
+                        <p style="color: var(--primary); font-size: 18px; font-weight: bold; margin-bottom: 30px;">${serviceName}</p>
+                        
+                        <form id="service-form">
+                            <div class="form-group">
+                                <label class="form-label">Ваше имя</label>
+                                <input type="text" class="form-input" id="service-first-name" name="firstName" placeholder="Введите ваше имя" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ваша фамилия</label>
+                                <input type="text" class="form-input" id="service-last-name" name="lastName" placeholder="Введите вашу фамилию" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ваш телефон</label>
+                                <input type="tel" class="form-input" id="service-phone" name="phone" placeholder="+7 (999) 999-99-99" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Желаемая дата</label>
+                                <input type="date" class="form-input" name="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Время</label>
+                                <select class="form-input" name="time" required>
+                                    <option value="">Выберите время</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                </select>
+                            </div>
+                            
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                    <i class="fas fa-calendar-check"></i> Записаться
+                                </button>
+                                <button type="button" class="btn" onclick="this.closest('.modal-overlay').remove()" style="flex: 1; background: #6c757d; color: white;">
+                                    Отмена
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Автозаполнение данных для авторизованных пользователей
+            if (userData) {
+                modal.querySelector('#service-first-name').value = userData.firstName || '';
+                modal.querySelector('#service-last-name').value = userData.lastName || '';
+                modal.querySelector('#service-phone').value = userData.phone || '';
+            }
+            
+            // Маска для телефона
+            modal.querySelector('#service-phone').addEventListener('input', function(e) {
+                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+            });
+            
+            // Обработка формы записи
+            modal.querySelector('#service-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Сохранение заявки
+                const applications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+                const formData = new FormData(this);
+                
+                const userState = window.AuthSystem ? window.AuthSystem.getUser() : JSON.parse(localStorage.getItem('userState') || '{}');
+                
+                const application = {
+                    id: Date.now(),
+                    service: serviceName,
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    phone: formData.get('phone'),
+                    date: formData.get('date'),
+                    time: formData.get('time'),
+                    notes: formData.get('notes'),
+                    status: 'новая',
+                    createdAt: new Date().toISOString(),
+                    userLogin: userState.userLogin || 'гость'
+                };
+                
+                applications.push(application);
+                localStorage.setItem('serviceApplications', JSON.stringify(applications));
+                
+                showNotification('Заявка отправлена! Мы свяжемся с вами для подтверждения записи.', 'success');
+                modal.remove();
+            });
+            
+            // Закрытие по клику вне модального окна
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Создаем тестового пользователя если его нет
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.length === 0) {
+                users.push({
+                    username: 'demo',
+                    password: '123456',
+                    firstName: 'Иван',
+                    lastName: 'Иванов',
+                    patronymic: 'Иванович',
+                    phone: '+7 (999) 123-45-67',
+                    name: 'Иванов Иван Иванович',
+                    initials: 'ИИ'
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автоматически инициализируется через auth.js
+            // Дополнительная логика для страницы (если есть)
+        });
+    </script>
+</body>
+</html>
